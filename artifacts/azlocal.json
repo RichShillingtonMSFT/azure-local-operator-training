@@ -381,31 +381,6 @@
           "description": "The physical nodes settings for deploying a hci cluster"
         }
       },
-      "networkingType": {
-        "defaultValue": "switchedMultiServerDeployment",
-        "type": "string",
-        "allowedValues": [
-          "switchedMultiServerDeployment",
-          "switchlessMultiServerDeployment",
-          "singleServerDeployment"
-        ],
-        "metadata": {
-          "description": "The networking type for deploying a hci cluster"
-        }
-      },
-      "networkingPattern": {
-        "defaultValue": "hyperConverged",
-        "type": "string",
-        "allowedValues": [
-          "hyperConverged",
-          "convergedManagementCompute",
-          "convergedComputeStorage",
-          "custom"
-        ],
-        "metadata": {
-          "description": "The networking pattern for deploying a hci cluster"
-        }
-      },
       "intentList": {
         "defaultValue": [],
         "type": "array",
