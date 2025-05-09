@@ -49,7 +49,7 @@ param vmAutologon bool = true
   'Standard_E32s_v5'
   'Standard_E32s_v6'
 ])
-param vmSize string = 'Standard_E32s_v5'
+param vmSize string = 'Standard_E32s_v6'
 
 @description('Setting this parameter to `true` will add the `CostControl` and `SecurityControl` tags to the provisioned resources. These tags are applicable to ONLY Microsoft-internal Azure lab tenants and designed for managing automated governance processes related to cost optimization and security controls')
 param governResourceTags bool = true
@@ -68,15 +68,6 @@ var resourceTags = governResourceTags ? union(tags, {
 
 var templateBaseUrl = 'https://raw.githubusercontent.com/RichShillingtonMSFT/azure-local-operator-training'
 var customerUsageAttributionDeploymentName = 'feada075-1961-4b99-829f-fa3828068933'
-
-module mgmtArtifactsAndPolicyDeployment 'mgmt/mgmtArtifacts.bicep' = {
-  name: 'mgmtArtifactsAndPolicyDeployment'
-  params: {
-    workspaceName: logAnalyticsWorkspaceName
-    location: location
-    resourceTags: resourceTags
-  }
-}
 
 module networkDeployment 'network/network.bicep' = {
   name: 'networkDeployment'

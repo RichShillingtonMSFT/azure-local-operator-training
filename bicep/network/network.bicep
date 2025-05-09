@@ -29,6 +29,9 @@ var bastionPublicIpAddressName = '${bastionName}-PIP'
 resource arcVirtualNetwork 'Microsoft.Network/virtualNetworks@2021-03-01' = {
   name: virtualNetworkName
   location: location
+    dependsOn: [
+    networkSecurityGroup
+  ]
   properties: {
     addressSpace: {
       addressPrefixes: [
