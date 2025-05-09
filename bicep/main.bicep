@@ -74,7 +74,6 @@ module networkDeployment 'network/network.bicep' = {
   params: {
     deployBastion: deployBastion
     location: location
-    resourceTags: resourceTags
   }
 }
 
