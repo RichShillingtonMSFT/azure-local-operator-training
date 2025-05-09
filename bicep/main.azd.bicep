@@ -53,7 +53,7 @@ param autoDeployClusterResource bool = false
 @description('Choice to enable automatic upgrade of Azure Arc enabled HCI cluster resource after the client VM deployment is complete. Only applicable when autoDeployClusterResource is true. Default is false.')
 param autoUpgradeClusterResource bool = false
 
-var templateBaseUrl = 'https://raw.githubusercontent.com/RichShillingtonMSFT/azure-local-operator-training/'
+var templateBaseUrl = 'https://raw.githubusercontent.com/RichShillingtonMSFT/azure-local-operator-training/refs/heads/main'
 
 targetScope = 'subscription'
 
