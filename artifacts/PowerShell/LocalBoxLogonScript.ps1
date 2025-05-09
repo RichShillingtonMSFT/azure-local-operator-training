@@ -28,7 +28,7 @@ Connect-AzAccount -ServicePrincipal -Credential $spncredential -Tenant $env:spnt
 #####################################################################
 # Register Azure providers
 #####################################################################
-
+<#
 # Register Azure providers
 Write-Header "Registering Providers"
 az provider register --namespace Microsoft.HybridCompute --wait
@@ -59,7 +59,7 @@ $roleAssignment = Get-AzRoleAssignment -ServicePrincipalName $Env:spnClientId -S
 if ($null -eq $roleAssignment) {
     New-AzRoleAssignment -RoleDefinitionName "Storage Account Contributor" -ServicePrincipalName $Env:spnClientId -Scope "/subscriptions/$Env:subscriptionId/resourceGroups/$Env:resourceGroup"
 }
-
+#>
 #############################################################
 # Remove registry keys that are used to automatically logon the user (only used for first-time setup)
 #############################################################
@@ -117,7 +117,7 @@ foreach ($extension in $LocalBoxConfig.VSCodeExtensions) {
 #####################################################################
 # Configure virtualization infrastructure
 #####################################################################
-
+<#
 # Configure storage pools and data disks
 Write-Header "Configuring storage"
 New-StoragePool -FriendlyName AzLocalPool -StorageSubSystemFriendlyName '*storage*' -PhysicalDisks (Get-PhysicalDisk -CanPool $true)
@@ -133,7 +133,7 @@ elseif ($vDisk | Get-Disk | Where-Object PartitionStyle -eq 'GPT') {
 }
 
 Stop-Transcript
-
+#>
 # Build Azure Local cluster
 & "$Env:LocalBoxDir\New-LocalBoxCluster.ps1"
 
