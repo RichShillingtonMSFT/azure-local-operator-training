@@ -66,7 +66,7 @@ var resourceTags = governResourceTags ? union(tags, {
     SecurityControl: 'Ignore'
 }) : tags
 
-var templateBaseUrl = 'https://raw.githubusercontent.com/RichShillingtonMSFT/azure-local-operator-training'
+var templateBaseUrl = 'https://raw.githubusercontent.com/RichShillingtonMSFT/azure-local-operator-training/refs/heads/main/'
 var customerUsageAttributionDeploymentName = 'feada075-1961-4b99-829f-fa3828068933'
 
 module networkDeployment 'network/network.bicep' = {
