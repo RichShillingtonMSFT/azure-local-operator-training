@@ -1849,7 +1849,7 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 # Provision Domain controller VM on AzSMGMT
 Write-Host "[Build cluster - Step 8/11] Building Domain Controller VM..." -ForegroundColor Green
 New-DCVM -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
-
+<#
 # Provision Admincenter VM
 # Write-Host "[Build cluster - Step 9/12] Building Windows Admin Center gateway server VM... (skipping step)" -ForegroundColor Green
 #New-AdminCenterVM -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
@@ -1872,11 +1872,11 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 Set-AzLocalDeployPrereqs -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
 
 & "$Env:LocalBoxDir\Generate-ARM-Template.ps1"
-
+#>
 #######################################################################################
 # Validate and deploy the cluster
 #######################################################################################
-
+<#
 Write-Host "[Build cluster - Step 10/11] Validate cluster deployment..." -ForegroundColor Green
 
 if ("True" -eq $env:autoDeployClusterResource) {
@@ -1905,10 +1905,10 @@ catch {
 }
 
 
-<#
-  Adding known governance tags for avoiding disruptions to the deployment. These tags are applicable to ONLY Microsoft-internal Azure lab tenants and designed for managing automated governance processes related to cost optimization and security controls.
-  Some resources are not created by the Bicep template for LocalBox, hence the need to add them here as part of the automation.
-#>
+
+# Adding known governance tags for avoiding disruptions to the deployment. These tags are applicable to ONLY Microsoft-internal Azure lab tenants and designed for managing automated governance processes related to cost optimization and security controls.
+# Some resources are not created by the Bicep template for LocalBox, hence the need to add them here as part of the automation.
+
 
 $VmResource = Get-AzResource -ResourceName $env:computername -ResourceGroupName $env:resourceGroup -ResourceType 'microsoft.compute/virtualmachines'
 
@@ -1997,7 +1997,7 @@ else {
     Write-Host '$autoDeployClusterResource is false, skipping Local cluster deployment. If desired, follow the documentation to deploy the cluster manually'
 }
 
-
+#>
 
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
