@@ -26,12 +26,6 @@ param logAnalyticsWorkspaceName string = 'LocalBox-Workspace'
 @description('Public DNS to use for the domain')
 param natDNS string = '8.8.8.8'
 
-@description('Target GitHub account')
-param githubAccount string = 'microsoft'
-
-@description('Target GitHub branch')
-param githubBranch string = 'main'
-
 @description('Choice to deploy Bastion to connect to the client VM')
 param deployBastion bool = false
 
