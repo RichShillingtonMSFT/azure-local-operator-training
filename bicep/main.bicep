@@ -30,7 +30,7 @@ param natDNS string = '8.8.8.8'
 param deployBastion bool = false
 
 @description('Location to deploy resources')
-param location string = resourceGroup().location
+param location string = 'eastus2'
 
 @description('Override default RDP port using this parameter. Default is 3389. No changes will be made to the client VM.')
 param rdpPort string = '3389'
