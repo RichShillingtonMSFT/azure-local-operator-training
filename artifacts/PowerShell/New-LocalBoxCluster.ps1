@@ -1849,7 +1849,6 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 # Provision Domain controller VM on AzSMGMT
 Write-Host "[Build cluster - Step 8/11] Building Domain Controller VM..." -ForegroundColor Green
 New-DCVM -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
-<#
 # Provision Admincenter VM
 # Write-Host "[Build cluster - Step 9/12] Building Windows Admin Center gateway server VM... (skipping step)" -ForegroundColor Green
 #New-AdminCenterVM -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
@@ -1872,7 +1871,7 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 Set-AzLocalDeployPrereqs -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
 
 & "$Env:LocalBoxDir\Generate-ARM-Template.ps1"
-#>
+
 #######################################################################################
 # Validate and deploy the cluster
 #######################################################################################
