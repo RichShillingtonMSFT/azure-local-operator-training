@@ -20,9 +20,6 @@ param windowsAdminUsername string
 @secure()
 param windowsAdminPassword string
 
-@description('Name for your log analytics workspace')
-param logAnalyticsWorkspaceName string = 'LocalBox-Workspace'
-
 @description('Public DNS to use for the domain')
 param natDNS string = '8.8.8.8'
 
@@ -95,7 +92,6 @@ module hostDeployment 'host/host.bicep' = {
     spnClientSecret: spnClientSecret
     spnTenantId: spnTenantId
     spnProviderId: spnProviderId
-    workspaceName: logAnalyticsWorkspaceName
     stagingStorageAccountName: storageAccountDeployment.outputs.storageAccountName
     templateBaseUrl: templateBaseUrl
     subnetId: networkDeployment.outputs.subnetId

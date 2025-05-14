@@ -20,9 +20,6 @@
         "windowsAdminPassword": {
             "value": "ArcPassword123!!"
         },
-        "logAnalyticsWorkspaceName": {
-            "value": "LocalBox-Workspace"
-        },
         "deployBastion": {
             "value": false
         },

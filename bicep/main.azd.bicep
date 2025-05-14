@@ -25,9 +25,6 @@ param windowsAdminUsername string = 'arcdemo'
 @secure()
 param windowsAdminPassword string
 
-@description('Name for your log analytics workspace')
-param logAnalyticsWorkspaceName string = 'LocalBox-Workspace'
-
 @description('Public DNS to use for the domain')
 param natDNS string = '8.8.8.8'
 
@@ -62,15 +59,6 @@ resource rg 'Microsoft.Resources/resourceGroups@2020-06-01' = {
   location: location
 }
 
-module mgmtArtifactsAndPolicyDeployment 'mgmt/mgmtArtifacts.bicep' = {
-  name: 'mgmtArtifactsAndPolicyDeployment'
-  scope: rg
-  params: {
-    workspaceName: logAnalyticsWorkspaceName
-    location: location
-  }
-}
-
 module networkDeployment 'network/network.bicep' = {
   name: 'networkDeployment'
   scope: rg
@@ -98,7 +86,6 @@ module hostDeployment 'host/host.bicep' = {
     spnClientSecret: spnClientSecret
     spnTenantId: spnTenantId
     spnProviderId: spnProviderId
-    workspaceName: logAnalyticsWorkspaceName
     stagingStorageAccountName: storageAccountDeployment.outputs.storageAccountName
     templateBaseUrl: templateBaseUrl
     subnetId: networkDeployment.outputs.subnetId
