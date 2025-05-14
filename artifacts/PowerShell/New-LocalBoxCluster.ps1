@@ -1265,6 +1265,8 @@ function New-AdminCenterVM {
             Install-WindowsFeature -Name RSAT-Hyper-V-Tools -IncludeAllSubFeature -IncludeManagementTools | Out-Null
             Write-Host "Installing Active Directory RSAT Tools on $VMName"
             Install-WindowsFeature -Name  RSAT-ADDS -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+            Write-Host "Installing Group Policy Management Tools on $VMName"
+            Install-WindowsFeature -Name  GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null
             Write-Host "Installing Failover Clustering RSAT Tools on $VMName"
             Install-WindowsFeature -Name  RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
             Write-Host "Installing DNS Server RSAT Tools on $VMName"
@@ -1997,6 +1999,14 @@ else {
 }
 
 #>
+
+Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {
+    Install-WindowsFeature -Name  RSAT-ADDS -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+    Install-WindowsFeature -Name  GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+    Install-WindowsFeature -Name  RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+}
+
+Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {Add-Computer -ComputerName localhost -LocalCredential $Using:localCred -DomainName $Using:LocalBoxConfig.SDNDomainFQDN -Credential $Using:domainCred -Restart -Force -PassThru -Verbose}
 
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
