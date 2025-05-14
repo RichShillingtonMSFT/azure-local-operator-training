@@ -1574,9 +1574,9 @@ function Set-AzLocalDeployPrereqs {
         } while ($attempts -lt $maxAttempts)
 
        }
-
-}
 #>
+}
+
 function Update-AzLocalCluster {
     param (
         $LocalBoxConfig,
