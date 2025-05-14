@@ -1,3 +1,6 @@
+@description('AzL VHD URL')
+param azlVHDXUri string
+
 @description('Azure service principal client id')
 param spnClientId string
 
@@ -85,6 +88,7 @@ module storageAccountDeployment 'mgmt/storageAccount.bicep' = {
 module hostDeployment 'host/host.bicep' = {
   name: 'hostVmDeployment'
   params: {
+    azlVHDXUri: azlVHDXUri
     vmSize: vmSize
     windowsAdminUsername: windowsAdminUsername
     windowsAdminPassword: windowsAdminPassword

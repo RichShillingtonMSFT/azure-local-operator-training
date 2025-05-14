@@ -464,6 +464,12 @@
         "metadata": {
           "description": "Solution builder extension (SBE) partner credential properties"
         }
+      },
+      "azlVHDXUri": {
+        "type": "string",
+        "metadata": {
+          "description": "The URI for the AzL VHDX file"
+        }
       }
     },
     "variables": {
