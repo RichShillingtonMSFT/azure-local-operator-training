@@ -9,7 +9,6 @@ param (
   [string]$resourceGroup,
   [string]$azureLocation,
   [string]$stagingStorageAccountName,
-  [string]$workspaceName,
   [string]$templateBaseUrl,
   [string]$registerCluster,
   [string]$deployAKSHCI,
@@ -37,7 +36,6 @@ $PSBoundParameters
 [System.Environment]::SetEnvironmentVariable('resourceGroup', $resourceGroup, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('azureLocation', $azureLocation, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('stagingStorageAccountName', $stagingStorageAccountName, [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('workspaceName', $workspaceName, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('templateBaseUrl', $templateBaseUrl, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('deployAKSHCI', $deployAKSHCI, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('deployResourceBridge', $deployResourceBridge, [System.EnvironmentVariableTarget]::Machine)
