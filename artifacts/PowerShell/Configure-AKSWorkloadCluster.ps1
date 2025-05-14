@@ -46,11 +46,11 @@ Invoke-Command -VMName "$($LocalBoxConfig.NodeHostConfig[0].Hostname)" -Credenti
 $WarningPreference = "SilentlyContinue"
 $ErrorActionPreference = "Continue"
 
-az login --service-principal --username $env:spnClientID --password=$env:spnClientSecret --tenant $env:spnTenantId
-az extension add --name customlocation
-az extension add -n aksarc --upgrade
+#az login --service-principal --username $env:spnClientID --password=$env:spnClientSecret --tenant $env:spnTenantId
+#az extension add --name customlocation
+#az extension add -n aksarc --upgrade
 $customLocationID=(az customlocation show --resource-group $env:resourceGroup --name $LocalBoxConfig.rbCustomLocationName --query id -o tsv)
-$lnetId="/subscriptions/$subId/resourceGroups/$env:resourceGroup/providers/Microsoft.AzureStackHCI/logicalnetworks/$lnetName"
-az aksarc create -n $LocalBoxConfig.AKSworkloadClusterName -g $env:resourceGroup --custom-location $customlocationID --vnet-ids $lnetId --aad-admin-group-object-ids $groupObjectID --generate-ssh-keys --control-plane-ip $LocalBoxConfig.AKSControlPlaneIP
+#$lnetId="/subscriptions/$subId/resourceGroups/$env:resourceGroup/providers/Microsoft.AzureStackHCI/logicalnetworks/$lnetName"
+#az aksarc create -n $LocalBoxConfig.AKSworkloadClusterName -g $env:resourceGroup --custom-location $customlocationID --vnet-ids $lnetId --aad-admin-group-object-ids $groupObjectID --generate-ssh-keys --control-plane-ip $LocalBoxConfig.AKSControlPlaneIP
 
 Stop-Transcript

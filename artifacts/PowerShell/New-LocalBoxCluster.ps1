@@ -1516,7 +1516,7 @@ function Set-AzLocalDeployPrereqs {
             Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
             #Install Arc registration script from PSGallery
-            Install-Module AzsHCI.ARCinstaller -Force
+            #Install-Module AzsHCI.ARCinstaller -Force
 
             #Install required PowerShell modules in your node for registration
             Install-Module Az.Accounts -Force

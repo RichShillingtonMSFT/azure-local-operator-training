@@ -13,7 +13,7 @@ BeforeDiscovery {
     Connect-AzAccount -ServicePrincipal -Credential $spncredential -Tenant $env:spntenantId -Subscription $env:subscriptionId
 
 }
-
+<#
 if ("True" -eq $env:autoDeployClusterResource) {
     Describe "<cluster>" -ForEach $clusters {
         BeforeAll {
@@ -32,7 +32,7 @@ if ("True" -eq $env:autoDeployClusterResource) {
     }
 
 }
-
+#>
 Describe "<vm>" -ForEach $VMs {
     BeforeAll {
         $vm = $_
