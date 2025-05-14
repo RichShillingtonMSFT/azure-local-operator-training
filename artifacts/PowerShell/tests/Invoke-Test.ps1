@@ -89,7 +89,7 @@ function Wait-AzLocalClusterConnectivity {
         Write-Host "Cluster '$ClusterName' does not exist - skipping connectivity check..."
     }
 }
-
+<#
 if ('True' -eq $env:autoDeployClusterResource) {
 
     # Wait for the deployment to complete
@@ -99,7 +99,7 @@ if ('True' -eq $env:autoDeployClusterResource) {
     Wait-AzLocalClusterConnectivity -ResourceGroupName $env:resourceGroup -ClusterName $LocalBoxConfig.ClusterName
 
 }
-
+#>
 Invoke-Pester -Path "$Env:LocalBoxTestsDir\common.tests.ps1" -Output Detailed -PassThru -OutVariable tests_common
 $tests_passed = $tests_common.Passed.Count
 $tests_failed = $tests_common.Failed.Count
