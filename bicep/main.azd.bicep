@@ -1,5 +1,9 @@
 @minLength(1)
 @maxLength(77)
+
+@description('Azure Blob Storage URL for the VHDX file')
+param azlVHDXUri string
+
 @description('Prefix for resource group, i.e. {name}-rg')
 param envName string
 
@@ -74,6 +78,7 @@ module hostDeployment 'host/host.bicep' = {
   name: 'hostVmDeployment'
   scope: rg
   params: {
+    azlVHDXUri: azlVHDXUri
     windowsAdminUsername: windowsAdminUsername
     windowsAdminPassword: windowsAdminPassword
     spnClientId: spnClientId

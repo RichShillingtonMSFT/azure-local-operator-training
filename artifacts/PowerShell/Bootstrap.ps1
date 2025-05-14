@@ -18,7 +18,8 @@ param (
   [string]$autoDeployClusterResource,
   [string]$autoUpgradeClusterResource,
   [string]$debugEnabled,
-  [string]$vmAutologon
+  [string]$vmAutologon,
+  [string]$azlVHDXUri
 )
 
 Write-Output "Input parameters:"
@@ -43,6 +44,7 @@ $PSBoundParameters
 [System.Environment]::SetEnvironmentVariable('autoUpgradeClusterResource', $autoUpgradeClusterResource, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('registerCluster', $registerCluster, [System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable('natDNS', $natDNS, [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('azlVHDXUri', $azlVHDXUri, [System.EnvironmentVariableTarget]::Machine)
 
 if ($debugEnabled -eq "true") {
   [System.Environment]::SetEnvironmentVariable('ErrorActionPreference', "Break", [System.EnvironmentVariableTarget]::Machine)
