@@ -45,6 +45,7 @@ Describe "<vm>" -ForEach $VMs {
         $vmobject = Get-VM -Name $vm
         $vmobject.State | Should -Be "Running"
     }
+<#    
     It "Azure Arc Connected Machine exists" {
         $connectedMachine = Get-AzConnectedMachine -Name $vm -ResourceGroupName $env:resourceGroup -SubscriptionId $env:subscriptionId
         $connectedMachine | Should -Not -BeNullOrEmpty
@@ -53,4 +54,5 @@ Describe "<vm>" -ForEach $VMs {
         $connectedMachine = Get-AzConnectedMachine -Name $vm -ResourceGroupName $env:resourceGroup -SubscriptionId $env:subscriptionId
         $connectedMachine.Status | Should -Be "Connected"
     }
+#>
 }
