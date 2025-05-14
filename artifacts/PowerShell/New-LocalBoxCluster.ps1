@@ -1459,6 +1459,7 @@ function Set-AzLocalDeployPrereqs {
         [PSCredential]$localCred,
         [PSCredential]$domainCred
     )
+<#
     Invoke-Command -VMName $LocalBoxConfig.MgmtHostConfig.Hostname -Credential $localCred -ScriptBlock {
         $LocalBoxConfig = $using:LocalBoxConfig
         $localCred = $using:localcred
@@ -1483,7 +1484,7 @@ function Set-AzLocalDeployPrereqs {
             New-HciAdObjectsPreCreation -AzureStackLCMUserCredential $domainCredNoDomain -AsHciOUName $ouName
         }
     }
-
+#>
     foreach ($node in $LocalBoxConfig.NodeHostConfig) {
         Invoke-Command -VMName $node.Hostname -Credential $localCred -ArgumentList $env:subscriptionId, $env:spnTenantId, $env:spnClientID, $env:spnClientSecret, $env:resourceGroup, $env:azureLocation -ScriptBlock {
             $subId = $args[0]
@@ -1872,7 +1873,7 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 
 Set-AzLocalDeployPrereqs -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
 
-& "$Env:LocalBoxDir\Generate-ARM-Template.ps1"
+#& "$Env:LocalBoxDir\Generate-ARM-Template.ps1"
 
 #######################################################################################
 # Validate and deploy the cluster
