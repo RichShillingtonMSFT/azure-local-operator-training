@@ -8,9 +8,6 @@
     "clusterName": {
       "value": "clusterName-staging"
     },
-    "azlVHDXUri":{
-      "value":  "azlVHDXUri"
-    },
     "arcNodeResourceIds": {
       "value": arcNodeResourceIds-staging
     },
