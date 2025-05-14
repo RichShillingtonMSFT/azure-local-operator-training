@@ -2009,6 +2009,40 @@ Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $L
 
 Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {Add-Computer -ComputerName localhost -LocalCredential $Using:localCred -DomainName $Using:LocalBoxConfig.SDNDomainFQDN -Credential $Using:domainCred -Restart -Force -PassThru -Verbose}
 
+Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $domainCred -ScriptBlock {
+    # Disable Edge 'First Run' Setup
+    Write-Host "Configuring Microsoft Edge."
+    $edgePolicyRegistryPath = 'HKLM:SOFTWARE\Policies\Microsoft\Edge'
+    $firstRunRegistryName = 'HideFirstRunExperience'
+    $firstRunRegistryValue = '0x00000001'
+    $savePasswordRegistryName = 'PasswordManagerEnabled'
+    $savePasswordRegistryValue = '0x00000000'
+
+    if (-NOT (Test-Path -Path $edgePolicyRegistryPath)) {
+      New-Item -Path $edgePolicyRegistryPath -Force | Out-Null
+    }
+
+    New-ItemProperty -Path $edgePolicyRegistryPath -Name $firstRunRegistryName -Value $firstRunRegistryValue -PropertyType DWORD -Force
+    New-ItemProperty -Path $edgePolicyRegistryPath -Name $savePasswordRegistryName -Value $savePasswordRegistryValue -PropertyType DWORD -Force
+
+    # Disable Server Manager WAC prompt
+    Write-Host "Disabling Server Manager WAC prompt."
+    $RegistryPath = "HKLM:\SOFTWARE\Microsoft\ServerManager"
+    $Name = "DoNotPopWACConsoleAtSMLaunch"
+    $Value = "1"
+    if (-not (Test-Path $RegistryPath)) {
+      New-Item -Path $RegistryPath -Force | Out-Null
+    }
+    New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType DWORD -Force
+
+    $url = "https://github.com/PowerShell/PowerShell/releases/latest"
+    $latestVersion = (Invoke-WebRequest -UseBasicParsing -Uri $url).Content | Select-String -Pattern "v[0-9]+\.[0-9]+\.[0-9]+" | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Value
+    $downloadUrl = "https://github.com/PowerShell/PowerShell/releases/download/$latestVersion/PowerShell-$($latestVersion.Substring(1,5))-win-x64.msi"
+    Invoke-WebRequest -UseBasicParsing -Uri $downloadUrl -OutFile .\PowerShell7.msi
+    Start-Process msiexec.exe -Wait -ArgumentList '/I PowerShell7.msi /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1 ADD_PATH=1'
+    Remove-Item .\PowerShell7.msi
+}
+
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
 Write-Host
