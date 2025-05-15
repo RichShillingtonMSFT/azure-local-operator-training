@@ -2011,9 +2011,7 @@ Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $L
     Install-WindowsFeature -Name  RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
 }
 
-Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {Add-Computer -ComputerName localhost -LocalCredential $Using:localCred -DomainName $Using:LocalBoxConfig.SDNDomainFQDN -Credential $Using:domainCred -Restart -Force -PassThru -Verbose}
-
-Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $domainCred -ScriptBlock {
+Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {
     # Disable Edge 'First Run' Setup
     Write-Host "Configuring Microsoft Edge."
     $edgePolicyRegistryPath = 'HKLM:SOFTWARE\Policies\Microsoft\Edge'
@@ -2046,6 +2044,8 @@ Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $d
     Start-Process msiexec.exe -Wait -ArgumentList '/I PowerShell7.msi /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1 ADD_PATH=1'
     Remove-Item .\PowerShell7.msi
 }
+
+Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {Add-Computer -ComputerName localhost -LocalCredential $Using:localCred -DomainName $Using:LocalBoxConfig.SDNDomainFQDN -Credential $Using:domainCred -Restart -Force -PassThru -Verbose}
 
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
