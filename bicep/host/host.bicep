@@ -125,6 +125,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
     type: 'SystemAssigned'
   }
   properties: {
+    licenseType: 'Windows_Server'
     hardwareProfile: {
       vmSize: vmSize
     }
