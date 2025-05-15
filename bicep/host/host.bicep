@@ -128,6 +128,13 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
     hardwareProfile: {
       vmSize: vmSize
     }
+    securityProfile: {
+      securityType: 'TrustedLaunch'
+        uefiSettings: {
+          secureBootEnabled: true
+          vTpmEnabled: true
+      }
+    }
     storageProfile: {
       osDisk: {
         name: '${vmName}-OSDisk'
