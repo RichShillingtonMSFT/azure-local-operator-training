@@ -287,8 +287,6 @@ if (($rdpPort -ne $null) -and ($rdpPort -ne "") -and ($rdpPort -ne "3389")) {
   Write-Host "RDP port configuration complete."
 }
 
-# Workaround for https://github.com/microsoft/azure_arc/issues/3035
-
 # Define firewall rule name
 $ruleName = "Block RDP UDP 3389"
 
