@@ -104,6 +104,7 @@ Resize-Partition -DriveLetter C -Size $(Get-PartitionSupportedSize -DriveLetter 
 
 New-Item -Path "$LocalBoxPath\Lab Files" -ItemType directory -Force | Out-Null
 New-Item -Path "$LocalBoxPath\Lab Files\Deployment Template" -ItemType directory -Force | Out-Null
+
 Write-Host "Downloading Azure Local configuration scripts"
 Invoke-WebRequest "https://raw.githubusercontent.com/Azure/arc_jumpstart_docs/main/img/wallpaper/localbox_wallpaper_dark.png" -OutFile $LocalBoxPath\wallpaper.png
 Invoke-WebRequest https://aka.ms/wacdownload -OutFile "$($LocalBoxConfig.Paths["WACDir"])\WindowsAdminCenter.msi"
