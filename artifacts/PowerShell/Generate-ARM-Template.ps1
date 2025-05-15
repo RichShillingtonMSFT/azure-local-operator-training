@@ -14,8 +14,8 @@ Start-Transcript -Path "$($LocalBoxConfig.Paths.LogsDir)\Generate-ARM-Template.l
 # New-AzRoleAssignment -ObjectId $env:spnProviderId -RoleDefinitionName "Azure Connected Machine Resource Manager" -ResourceGroup $env:resourceGroup -ErrorAction Continue
 # $ErrorActionPreference = "Stop"
 
-#$arcNodes = Get-AzConnectedMachine -ResourceGroup $env:resourceGroup
-#$arcNodeResourceIds = $arcNodes.Id | ConvertTo-Json -AsArray
+$arcNodes = Get-AzConnectedMachine -ResourceGroup $env:resourceGroup
+$arcNodeResourceIds = $arcNodes.Id | ConvertTo-Json -AsArray
 
 # foreach ($machine in $arcNodes) {
 #     $ErrorActionPreference = "Continue"
