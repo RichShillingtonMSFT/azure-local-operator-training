@@ -25,27 +25,6 @@ $spnpassword = ConvertTo-SecureString $env:spnClientSecret -AsPlainText -Force
 $spncredential = New-Object System.Management.Automation.PSCredential ($env:spnClientId, $spnpassword)
 Connect-AzAccount -ServicePrincipal -Credential $spncredential -Tenant $env:spntenantId -Subscription $env:subscriptionId
 
-#####################################################################
-# Register Azure providers
-#####################################################################
-<#
-# Register Azure providers
-Write-Header "Registering Providers"
-az provider register --namespace Microsoft.HybridCompute --wait
-az provider register --namespace Microsoft.GuestConfiguration --wait
-az provider register --namespace Microsoft.Kubernetes --wait
-az provider register --namespace Microsoft.KubernetesConfiguration --wait
-az provider register --namespace Microsoft.ExtendedLocation --wait
-az provider register --namespace Microsoft.AzureArcData --wait
-az provider register --namespace Microsoft.OperationsManagement --wait
-az provider register --namespace Microsoft.AzureStackHCI --wait
-az provider register --namespace Microsoft.ResourceConnector --wait
-az provider register --namespace Microsoft.Compute --wait
-#>
-#####################################################################
-# Add RBAC permissions
-#####################################################################
-
 # Add required RBAC permission required for the service principal to deploy Azure Local
 
 Write-Header "Add required RBAC permission required for the service principal to deploy Azure Local"
