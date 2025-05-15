@@ -102,6 +102,8 @@ Start-Transcript -Path "$($LocalBoxConfig.Paths["LogsDir"])\Bootstrap.log"
 Write-Host "Extending C:\ partition to the maximum size"
 Resize-Partition -DriveLetter C -Size $(Get-PartitionSupportedSize -DriveLetter C).SizeMax
 
+New-Item -Path "$LocalBoxPath\Lab Files" -ItemType directory -Force | Out-Null
+New-Item -Path "$LocalBoxPath\Lab Files\Deployment Template" -ItemType directory -Force | Out-Null
 Write-Host "Downloading Azure Local configuration scripts"
 Invoke-WebRequest "https://raw.githubusercontent.com/Azure/arc_jumpstart_docs/main/img/wallpaper/localbox_wallpaper_dark.png" -OutFile $LocalBoxPath\wallpaper.png
 Invoke-WebRequest https://aka.ms/wacdownload -OutFile "$($LocalBoxConfig.Paths["WACDir"])\WindowsAdminCenter.msi"
@@ -116,11 +118,11 @@ Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/tests/localbox-bginf
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/tests/Invoke-Test.ps1") -OutFile "$($LocalBoxConfig.Paths["TestsDir"])\Invoke-Test.ps1"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/LogInstructions.txt") -OutFile "$($LocalBoxConfig.Paths["LogsDir"])\LogInstructions.txt"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/jumpstart-user-secret.yaml") -OutFile $LocalBoxPath\jumpstart-user-secret.yaml
-Invoke-WebRequest ($templateBaseUrl + "artifacts/azlocal.json") -OutFile $LocalBoxPath\azlocal.json
-Invoke-WebRequest ($templateBaseUrl + "artifacts/azlocal.parameters.json") -OutFile $LocalBoxPath\azlocal.parameters.json
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/dsc/packages.dsc.yml") -OutFile "$($LocalBoxConfig.Paths["DSCDir"])\packages.dsc.yml"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/dsc/hyper-v.dsc.yml") -OutFile "$($LocalBoxConfig.Paths["DSCDir"])\hyper-v.dsc.yml"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/WinGet.ps1") -OutFile "$LocalBoxPath\WinGet.ps1"
+Invoke-WebRequest ($templateBaseUrl + "artifacts/Lab Files/Deployment Template/azlocal.json") -OutFile "$LocalBoxPath\Lab Files\Deployment Template\azlocal.json"
+Invoke-WebRequest ($templateBaseUrl + "artifacts/Lab Files/Deployment Template/azlocal.parameters.json") -OutFile "$LocalBoxPath\Lab Files\Deployment Template\azlocal.parameters.json"
 
 # Replace password and DNS placeholder
 Write-Host "Updating config placeholders with injected values."
