@@ -1774,11 +1774,26 @@ foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
     Set-AzLocalNodeVHDX -HostName $VM.Hostname -IPAddress $VM.IP -VMMac $mac  -LocalBoxConfig $LocalBoxConfig
 }
 
+Set-VMMemory -VMName "azlhost1" -DynamicMemoryEnabled $false
+Set-VM -VMName "azlhost1" -CheckpointType Disabled
+Set-VMKeyProtector -VMName "azlhost1" -NewLocalKeyProtector
+Enable-VmTpm -VMName "azlhost1"
+
+Set-VMMemory -VMName "azlhost2" -DynamicMemoryEnabled $false
+Set-VM -VMName "azlhost2" -CheckpointType Disabled
+Set-VMKeyProtector -VMName "azlhost2" -NewLocalKeyProtector
+Enable-VmTpm -VMName "azlhost2"
+
+
 # Start Virtual Machines
 Write-Host "[Build cluster - Step 5/11] Starting VMs..." -ForegroundColor Green
 Write-Host "Starting VM: $($LocalBoxConfig.MgmtHostConfig.Hostname)"
 Start-VM -Name $LocalBoxConfig.MgmtHostConfig.Hostname
 foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
+    Set-VMMemory -VMName $VM.Hostname -DynamicMemoryEnabled $false
+    Set-VM -VMName $VM.Hostname -CheckpointType Disabled
+    Set-VMKeyProtector -VMName $VM.Hostname -NewLocalKeyProtector
+    Enable-VmTpm -VMName $VM.Hostname
     Write-Host "Starting VM: $($VM.Hostname)"
     Start-VM -Name $VM.Hostname
 }
