@@ -2047,6 +2047,10 @@ Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $L
 
 Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {Add-Computer -ComputerName localhost -LocalCredential $Using:localCred -DomainName $Using:LocalBoxConfig.SDNDomainFQDN -Credential $Using:domainCred -Restart -Force -PassThru -Verbose}
 
+foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
+    Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {Resize-Partition -DriveLetter C -Size (Get-PartitionSupportedSize -DriveLetter C).SizeMax}
+}
+
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
 Write-Host
