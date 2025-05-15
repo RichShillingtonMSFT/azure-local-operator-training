@@ -1681,18 +1681,7 @@ Write-Host "[Build cluster - Step 1/11] Downloading LocalBox VHDs" -ForegroundCo
 $Env:AZCOPY_BUFFER_GB = 4
 Write-Output "Downloading nested VMs VHDX files. This can take some time, hold tight..."
 
-azcopy cp 'https://azlimagestore.blob.core.windows.net/vhds/AzL2504.vhdx' "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.vhdx" --recursive=true --check-length=false --log-level=ERROR
-#azcopy cp 'https://jumpstartprodsg.blob.core.windows.net/jslocal/localbox/prod/AzLocal2411.sha256' "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.sha256" --recursive=true --check-length=false --log-level=ERROR
-
-<# $checksum = Get-FileHash -Path "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.vhdx"
-$hash = Get-Content -Path "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.sha256"
-if ($checksum.Hash -eq $hash) {
-    Write-Host "AZSCHI.vhdx has valid checksum. Continuing..."
-}
-else {
-    Write-Error "AZSCHI.vhdx is corrupt. Aborting deployment. Re-run C:\LocalBox\LocalBoxLogonScript.ps1 to retry"
-    throw
-} #>
+azcopy cp 'https://azlimagestore.blob.core.windows.net/vhds/AzL2503.vhdx' "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.vhdx" --recursive=true --check-length=false --log-level=ERROR
 
 azcopy cp https://jumpstartprodsg.blob.core.windows.net/hcibox23h2/WinServerApril2024.vhdx "$($LocalBoxConfig.Paths.VHDDir)\GUI.vhdx" --recursive=true --check-length=false --log-level=ERROR
 azcopy cp https://jumpstartprodsg.blob.core.windows.net/hcibox23h2/WinServerApril2024.sha256 "$($LocalBoxConfig.Paths.VHDDir)\GUI.sha256" --recursive=true --check-length=false --log-level=ERROR
@@ -1706,9 +1695,6 @@ else {
     Write-Error "GUI.vhdx is corrupt. Aborting deployment. Re-run C:\LocalBox\LocalBoxLogonScript.ps1 to retry"
     throw
 }
-# BITSRequest -Params @{'Uri'='https://partner-images.canonical.com/hyper-v/desktop/focal/current/ubuntu-focal-hyperv-amd64-ubuntu-desktop-hyperv.vhdx.zip'; 'Filename'="$($LocalBoxConfig.Paths.VHDDir)\Ubuntu.vhdx.zip"}
-# Expand-Archive -Path "$($LocalBoxConfig.Paths.VHDDir)\Ubuntu.vhdx.zip" -DestinationPath $($LocalBoxConfig.Paths.VHDDir)
-# Move-Item -Path "$($LocalBoxConfig.Paths.VHDDir)\livecd.ubuntu-desktop-hyperv.vhdx" -Destination "$($LocalBoxConfig.Paths.VHDDir)\Ubuntu.vhdx"
 
 # Set credentials
 $localCred = new-object -typename System.Management.Automation.PSCredential `
@@ -2010,6 +1996,10 @@ Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $L
     Install-WindowsFeature -Name  GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null
     Install-WindowsFeature -Name  RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
 }
+
+$Session = New-PSSession -ComputerName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred
+Copy-Item -Path 'C:\LocalBox\Lab Files' -Destination 'c:\' -ToSession $Session -Recurse -Force
+Remove-PSSession -Session $Session
 
 Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {
     # Disable Edge 'First Run' Setup

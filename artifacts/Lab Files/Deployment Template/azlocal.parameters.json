@@ -2,74 +2,77 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "keyVaultName": {
+      "value": "Student##-kv-30ee4"
+    },
+    "clusterWitnessStorageAccountName": {
+      "value": "student##6xvlepyiemea6"
+    },
+    "diagnosticStorageAccountName": {
+      "value": "student##diagsa30ee4"
+    },
+    "clusterName": {
+      "value": "student##cluster"
+    },
+    "localAdminPassword": {
+      "value": "Lab Password"
+    },
+    "AzureStackLCMAdminPassword": {
+      "value": "Lab Password"
+    },
+    "arbDeploymentAppID": {
+      "value": ""
+    },
+    "arbDeploymentAppSecret": {
+      "value": ""
+    },
+    "arbDeploymentSPNObjectID": {
+      "value": ""
+    },
+    "hciResourceProviderObjectID": {
+      "value": ""
+    },
+    "arcNodeResourceIds": {
+      "value": [
+        "",
+        ""
+      ]
+    },
+    "namingPrefix": {
+      "value": "AzL"
+    },
+    "localAdminUserName": {
+      "value": "Administrator"
+    },
     "witnessType": {
       "value": "Cloud"
     },
-    "clusterName": {
-      "value": "clusterName-staging"
-    },
-    "arcNodeResourceIds": {
-      "value": arcNodeResourceIds-staging
-    },
-    "localAdminUserName": {
-      "value": "localAdminUserName-staging"
-    },
-    "localAdminPassword": {
-      "value": "localAdminPassword-staging"
-    },
     "AzureStackLCMAdminUsername": {
-      "value": "AzureStackLCMAdminUserName-staging"
-    },
-    "AzureStackLCMAdminPassword": {
-      "value": "AzureStackLCMAdminAdminPassword-staging"
-    },
-    "arbDeploymentAppID": {
-      "value": "arbDeploymentAppId-staging"
-    },
-    "arbDeploymentAppSecret": {
-      "value": "arbDeploymentAppSecret-staging"
-    },
-    "arbDeploymentSPNObjectID": {
-      "value": "arbDeploymentSPNObjectID-staging"
-    },
-    "hciResourceProviderObjectID": {
-      "value": "hciResourceProviderObjectID-staging"
+      "value": "AzLDeploymentUser"
     },
     "domainFqdn": {
-      "value": "domainFqdn-staging"
-    },
-    "namingPrefix": {
-      "value": "namingPrefix-staging"
-    },
-    "keyVaultName": {
-      "value": "keyVaultName-staging"
-    },
-    "clusterWitnessStorageAccountName": {
-      "value": "ClusterWitnessStorageAccountName-staging"
-    },
-    "diagnosticStorageAccountName": {
-      "value": "diagnosticStorageAccountName-staging"
+      "value": "jumpstart.local"
     },
     "adouPath": {
-      "value": "adouPath-staging"
+      "value": "OU=azurelocal,DC=jumpstart,DC=local"
     },
     "subnetMask": {
-      "value": "subnetMask-staging"
+      "value": "255.255.255.0"
     },
     "defaultGateway": {
-      "value": "defaultGateway-staging"
+      "value": "192.168.1.1"
     },
     "startingIPAddress": {
-      "value": "startingIp-staging"
+      "value": "192.168.1.100"
     },
     "endingIPAddress": {
-      "value": "endingIp-staging"
+      "value": "192.168.1.199"
     },
     "dnsServers": {
-      "value": dnsServers-staging
+      "value": ["192.168.1.254"]
     },
     "physicalNodesSettings": {
-      "value": physicalNodesSettings-staging
+      "value": [ { "name": "AzLHOST1", "ipv4Address": "192.168.1.12" }, { "name": "AzLHOST2", "ipv4Address": "192.168.1.13" } ]
     },
     "storageConnectivitySwitchless": {
       "value": false
@@ -137,12 +140,12 @@
         {
           "name": "StorageNetwork1",
           "networkAdapterName": "StorageA",
-          "vlanId": "storageNicAVLAN-staging"
+          "vlanId": "711"
         },
         {
           "name": "StorageNetwork2",
           "networkAdapterName": "StorageB",
-          "vlanId": "storageNicBVLAN-staging"
+          "vlanId": "712"
         }
       ]
     },
@@ -153,7 +156,7 @@
       "value": true
     },
     "customLocation": {
-      "value": "customLocation-staging"
+      "value": "jumpstart"
     },
     "deploymentMode": {
       "value": "Validate"
