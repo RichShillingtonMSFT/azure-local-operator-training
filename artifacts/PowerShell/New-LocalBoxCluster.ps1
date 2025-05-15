@@ -1228,10 +1228,10 @@ Write-Host "[Build cluster - Step 1/11] Downloading LocalBox VHDs" -ForegroundCo
 $Env:AZCOPY_BUFFER_GB = 4
 Write-Output "Downloading nested VMs VHDX files. This can take some time, hold tight..."
 
-azcopy cp 'https://azlimagestore.blob.core.windows.net/vhds/AzL2503.vhdx' "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.vhdx" --recursive=true --check-length=false --log-level=ERROR
-
-azcopy cp https://jumpstartprodsg.blob.core.windows.net/hcibox23h2/WinServerApril2024.vhdx "$($LocalBoxConfig.Paths.VHDDir)\GUI.vhdx" --recursive=true --check-length=false --log-level=ERROR
-azcopy cp https://jumpstartprodsg.blob.core.windows.net/hcibox23h2/WinServerApril2024.sha256 "$($LocalBoxConfig.Paths.VHDDir)\GUI.sha256" --recursive=true --check-length=false --log-level=ERROR
+#azcopy cp 'https://azlimagestoresa.blob.core.windows.net/vhds/AzL2503.vhdx' "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.vhdx" --recursive=true --check-length=false --log-level=ERROR
+azcopy cp 'https://jumpstartprodsg.blob.core.windows.net/hcibox23h2/WinServerApril2024.vhdx' "$($LocalBoxConfig.Paths.VHDDir)\AzL-node.vhdx" --recursive=true --check-length=false --log-level=ERROR
+azcopy cp 'https://jumpstartprodsg.blob.core.windows.net/hcibox23h2/WinServerApril2024.vhdx' "$($LocalBoxConfig.Paths.VHDDir)\GUI.vhdx" --recursive=true --check-length=false --log-level=ERROR
+azcopy cp 'https://jumpstartprodsg.blob.core.windows.net/hcibox23h2/WinServerApril2024.sha256' "$($LocalBoxConfig.Paths.VHDDir)\GUI.sha256" --recursive=true --check-length=false --log-level=ERROR
 
 $checksum = Get-FileHash -Path "$($LocalBoxConfig.Paths.VHDDir)\GUI.vhdx"
 $hash = Get-Content -Path "$($LocalBoxConfig.Paths.VHDDir)\GUI.sha256"
@@ -1389,9 +1389,6 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 # Provision Domain controller VM on AzSMGMT
 Write-Host "[Build cluster - Step 8/11] Building Domain Controller VM..." -ForegroundColor Green
 New-DCVM -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
-# Provision Admincenter VM
-# Write-Host "[Build cluster - Step 9/12] Building Windows Admin Center gateway server VM... (skipping step)" -ForegroundColor Green
-#New-AdminCenterVM -LocalBoxConfig $LocalBoxConfig -localCred $localCred -domainCred $domainCred
 
 Write-Host "[Build cluster - Step 9/11] Preparing Azure local cluster cloud deployment..." -ForegroundColor Green
 
@@ -1414,7 +1411,7 @@ Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $L
     Install-WindowsFeature -Name  RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
 }
 
-$Session = New-PSSession -ComputerName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred
+$Session = New-PSSession -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred
 Copy-Item -Path 'C:\LocalBox\Lab Files' -Destination 'c:\' -ToSession $Session -Recurse -Force
 Remove-PSSession -Session $Session
 
@@ -1454,15 +1451,28 @@ Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $L
 
 Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {Add-Computer -ComputerName localhost -LocalCredential $Using:localCred -DomainName $Using:LocalBoxConfig.SDNDomainFQDN -Credential $Using:domainCred -Restart -Force -PassThru -Verbose}
 
-foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
-    Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {Resize-Partition -DriveLetter C -Size (Get-PartitionSupportedSize -DriveLetter C).SizeMax}
-}
+#foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
+#    Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {Resize-Partition -DriveLetter C -Size (Get-PartitionSupportedSize -DriveLetter C).SizeMax}
+#}
 
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
 Write-Host
 Write-Host "Successfully deployed LocalBox infrastructure." -ForegroundColor Green
 Write-Host "Infrastructure deployment time was $($timeSpan.Hours):$($timeSpan.Minutes) (hh:mm)." -ForegroundColor Green
+
+$DeploymentProgressString = 'Deployment Complete'
+
+$tags = Get-AzResourceGroup -Name $env:resourceGroup | Select-Object -ExpandProperty Tags
+
+if ($null -ne $tags) {
+    $tags['DeploymentProgress'] = $DeploymentProgressString
+} else {
+    $tags = @{'DeploymentProgress' = $DeploymentProgressString }
+}
+
+$null = Set-AzResourceGroup -ResourceGroupName $env:resourceGroup -Tag $tags
+$null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:resourceGroup -ResourceType 'microsoft.compute/virtualmachines' -Tag $tags -Force
 
 Stop-Transcript
 
