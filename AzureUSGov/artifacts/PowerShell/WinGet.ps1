@@ -11,7 +11,7 @@ Start-Transcript -Path $logFilePath -Force -ErrorAction SilentlyContinue
 
 $DeploymentProgressString = "Installing WinGet packages..."
 
-Connect-AzAccount -Identity -Tenant $tenantId -Subscription $subscriptionId
+Connect-AzAccount -Environment AzureUSGovernment -Identity -Tenant $tenantId -Subscription $subscriptionId
 
 $tags = Get-AzResourceGroup -Name $resourceGroup | Select-Object -ExpandProperty Tags
 
