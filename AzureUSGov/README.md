@@ -1,0 +1,1 @@
+# azure-local-operator-training
