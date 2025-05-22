@@ -1581,6 +1581,26 @@ $Shortcut.TargetPath = $TargetPath
 $Shortcut.Save()
 }
 
+$VHD = Get-VHD 'V:\VMs\AzLHOST1.vhdx'
+if (($VHD.Size /1GB) -lt 100)
+{
+    Resize-VHD -Path 'V:\VMs\AzLHOST1.vhdx' -SizeBytes 101GB
+}
+
+$VHD = Get-VHD 'V:\VMs\AzLHOST2.vhdx'
+if (($VHD.Size /1GB) -lt 100)
+{
+    Resize-VHD -Path 'V:\VMs\AzLHOST2.vhdx' -SizeBytes 101GB
+}
+
+foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
+    Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {
+        Resize-Partition -DriveLetter C -Size (Get-PartitionSupportedSize -DriveLetter C).SizeMax
+        powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\ImageComposition\Scripts\scheduledTaskRunner.ps1'"
+        powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\BootstrapPackage\bootstrap\content\Bootstrap-Setup.ps1 -Install'"
+    }
+}
+
 $DeploymentProgressString = 'Deployment Complete'
 
 $tags = Get-AzResourceGroup -Name $env:resourceGroup | Select-Object -ExpandProperty Tags
