@@ -1414,6 +1414,7 @@ if ($null -ne $tags) {
 $null = Set-AzResourceGroup -ResourceGroupName $env:resourceGroup -Tag $tags
 $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:resourceGroup -ResourceType 'microsoft.compute/virtualmachines' -Tag $tags -Force
 
+<#
 $VHD = Get-VHD 'V:\VMs\AzLHOST1.vhdx'
 if (($VHD.Size /1GB) -lt 100)
 {
@@ -1425,6 +1426,7 @@ if (($VHD.Size /1GB) -lt 100)
 {
     Resize-VHD -Path 'V:\VMs\AzLHOST2.vhdx' -SizeBytes 101GB
 }
+#>
 
 foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
     Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {
