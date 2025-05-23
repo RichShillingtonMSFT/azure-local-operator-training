@@ -58,17 +58,6 @@ foreach ($key in $keys) {
 }
 
 #############################################################
-# Create desktop shortcut for Logs-folder
-#############################################################
-
-$WshShell = New-Object -comObject WScript.Shell
-$LogsPath = "C:\LocalBox\Logs"
-$Shortcut = $WshShell.CreateShortcut("$Env:USERPROFILE\Desktop\Logs.lnk")
-$Shortcut.TargetPath = $LogsPath
-$shortcut.WindowStyle = 3
-$shortcut.Save()
-
-#############################################################
 # Configure Windows Terminal as the default terminal application
 #############################################################
 
@@ -111,17 +100,6 @@ if ($vDisk | Get-Disk | Where-Object PartitionStyle -eq 'raw') {
 elseif ($vDisk | Get-Disk | Where-Object PartitionStyle -eq 'GPT') {
     $vDisk | Get-Disk | New-Partition -DriveLetter $LocalBoxConfig.HostVMDriveLetter -UseMaximumSize | Format-Volume -NewFileSystemLabel AzLocalData -AllocationUnitSize 64KB -FileSystem NTFS
 }
-
-Stop-Transcript
-
-# Build Azure Local cluster
-& "$Env:LocalBoxDir\New-LocalBoxCluster.ps1"
-
-Start-Transcript -Append -Path "$($LocalBoxConfig.Paths.LogsDir)\LocalBoxLogonScript.log"
-
-# Removing the LogonScript Scheduled Task so it won't run on next reboot
-Write-Header "Removing Logon Task"
-Unregister-ScheduledTask -TaskName "LocalBoxLogonScript" -Confirm:$false
 
 #Changing to Jumpstart LocalBox wallpaper
 
@@ -171,18 +149,7 @@ Convert-JSImageToBitMap -SourceFilePath "$Env:LocalBoxDir\wallpaper.png" -Destin
 Set-JSDesktopBackground -ImagePath "$Env:LocalBoxDir\wallpaper.bmp"
 
 Write-Header "Running tests to verify infrastructure"
-
-& "$Env:LocalBoxTestsDir\Invoke-Test.ps1"
-
-Write-Header "Creating deployment logs bundle"
-
-$RandomString = -join ((48..57) + (97..122) | Get-Random -Count 6 | % {[char]$_})
-$LogsBundleTempDirectory = "$Env:windir\TEMP\LogsBundle-$RandomString"
-$null = New-Item -Path $LogsBundleTempDirectory -ItemType Directory -Force
-
-#required to avoid "file is being used by another process" error when compressing the logs
-Copy-Item -Path "$($LocalBoxConfig.Paths.LogsDir)\*.log" -Destination $LogsBundleTempDirectory -Force -PassThru
-Compress-Archive -Path "$LogsBundleTempDirectory\*.log" -DestinationPath "$($LocalBoxConfig.Paths.LogsDir)\LogsBundle-$RandomString.zip" -PassThru
-
-
 Stop-Transcript
+
+# Build Azure Local cluster
+& "$Env:LocalBoxDir\New-LocalBoxCluster.ps1"
