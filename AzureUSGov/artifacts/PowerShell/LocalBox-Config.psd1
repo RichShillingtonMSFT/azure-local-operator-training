@@ -25,14 +25,19 @@
     )
 
     # VSCode extensions
-    VSCodeExtensions        = @(
+    VSCodeExtensions  = @(
         'ms-vscode-remote.remote-containers',
         'ms-vscode-remote.remote-wsl',
         'ms-vscode.powershell',
         'redhat.vscode-yaml',
         'ZainChen.json',
         'esbenp.prettier-vscode',
-        'ms-kubernetes-tools.vscode-kubernetes-tools'
+        'ms-kubernetes-tools.vscode-kubernetes-tools',
+        'msazurermtools.azurerm-vscode-tools',
+        'ms-azuretools.vscode-azureresourcegroups',
+        'ms-azuretools.vscode-azurevirtualmachines',
+        'ms-azuretools.vscode-bicep',
+        'ms-vscode.azurecli'
     )
 
     HostVMDriveLetter = "V"
