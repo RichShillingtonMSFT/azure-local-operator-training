@@ -1436,9 +1436,12 @@ foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
     }
 }
 
-Install-WindowsFeature -Name  RSAT-ADDS -IncludeAllSubFeature -IncludeManagementTools | Out-Null
-Install-WindowsFeature -Name  GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null
-Install-WindowsFeature -Name  RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Move-Item 'C:\LocalBox\LabFiles' -Destination 'C:\' -Force
+
+Install-WindowsFeature -Name RSAT-ADDS -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Install-WindowsFeature -Name GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Install-WindowsFeature -Name RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Install-WindowsFeature -Name RSAT-DNS-Server | Out-Null
 
 # Disable Edge 'First Run' Setup
 Write-Host "Configuring Microsoft Edge."
@@ -1464,6 +1467,32 @@ if (-not (Test-Path $RegistryPath)) {
     New-Item -Path $RegistryPath -Force | Out-Null
 }
 New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType DWORD -Force
+
+# Install Chocolatey
+Write-Host "Installing Chocolatey"
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+Start-Sleep -Seconds 10
+
+# Create Shortcut for Hyper-V Manager
+Write-Host "Creating Shortcut for Hyper-V Manager"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk" -Destination "C:\Users\Public\Desktop"
+
+# Create Shortcut for Failover-Cluster Manager
+Write-Host "Creating Shortcut for Failover-Cluster Manager"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Failover Cluster Manager.lnk" -Destination "C:\Users\Public\Desktop"
+
+# Create Shortcut for DNS
+Write-Host "Creating Shortcut for DNS Manager"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\DNS.lnk" -Destination "C:\Users\Public\Desktop"
+
+# Create Shortcut for Active Directory Users and Computers
+Write-Host "Creating Shortcut for AD Users and Computers"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk" -Destination "C:\Users\Public\Desktop"
+
+# Install Kubectl
+Write-Host 'Installing kubectl'
+$expression = "choco install kubernetes-cli -y --limit-output"
+Invoke-Expression $expression
 
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
