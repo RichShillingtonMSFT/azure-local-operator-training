@@ -1201,14 +1201,6 @@ $subscriptionId = $env:subscriptionId
 $azureLocation = $env:azureLocation
 $resourceGroup = $env:resourceGroup
 
-#####################################################################
-# Configure VNet DNS servers
-#####################################################################
-$dnsServers = @("$($LocalBoxConfig.vmDNS)", "168.63.129.16")
-$VNet = Get-AzVirtualNetwork -ResourceGroupName $env:resourceGroup
-$VNet.DhcpOptions.DnsServers = $dnsServers
-Set-AzVirtualNetwork -VirtualNetwork $vnet
-
 Import-Module Hyper-V
 
 $DeploymentProgressString = 'Downloading nested VMs VHDX files'
@@ -1414,6 +1406,8 @@ if ($null -ne $tags) {
 $null = Set-AzResourceGroup -ResourceGroupName $env:resourceGroup -Tag $tags
 $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:resourceGroup -ResourceType 'microsoft.compute/virtualmachines' -Tag $tags -Force
 
+Write-Host "[Build cluster - Step 10/11] Running bootstrap on AzL Hosts..." -ForegroundColor Green
+
 foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
     Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {
         powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\ImageComposition\Scripts\scheduledTaskRunner.ps1'"
@@ -1422,6 +1416,8 @@ foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
 }
 
 Move-Item 'C:\LocalBox\LabFiles' -Destination 'C:\' -Force
+
+Write-Host "[Build cluster - Step 11/11] Configuring Host VM..." -ForegroundColor Green
 
 Install-WindowsFeature -Name RSAT-ADDS -IncludeAllSubFeature -IncludeManagementTools | Out-Null
 Install-WindowsFeature -Name GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null

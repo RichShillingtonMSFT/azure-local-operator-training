@@ -40,6 +40,14 @@ if ($null -eq $roleAssignment) {
     New-AzRoleAssignment -RoleDefinitionName "Storage Account Contributor" -ServicePrincipalName $Env:spnClientId -Scope "/subscriptions/$Env:subscriptionId/resourceGroups/$Env:resourceGroup"
 }
 
+#####################################################################
+# Configure VNet DNS servers
+#####################################################################
+$dnsServers = @("$($LocalBoxConfig.vmDNS)", "168.63.129.16")
+$VNet = Get-AzVirtualNetwork -ResourceGroupName $env:resourceGroup
+$VNet.DhcpOptions.DnsServers = $dnsServers
+Set-AzVirtualNetwork -VirtualNetwork $vnet
+
 #############################################################
 # Remove registry keys that are used to automatically logon the user (only used for first-time setup)
 #############################################################
