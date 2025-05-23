@@ -1430,7 +1430,6 @@ if (($VHD.Size /1GB) -lt 100)
 
 foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
     Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {
-        Resize-Partition -DriveLetter C -Size (Get-PartitionSupportedSize -DriveLetter C).SizeMax
         powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\ImageComposition\Scripts\scheduledTaskRunner.ps1'"
         powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\BootstrapPackage\bootstrap\content\Bootstrap-Setup.ps1 -Install'"
     }
