@@ -1489,6 +1489,24 @@ Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administra
 Write-Host "Creating Shortcut for AD Users and Computers"
 Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk" -Destination "C:\Users\Public\Desktop"
 
+$ShortcutPath = "$env:PUBLIC\Desktop\Azure.lnk"
+$TargetPath = "https://portal.azure.com"
+
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = $TargetPath
+$Shortcut.IconLocation = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe, 0"  # Optional: Set browser icon
+$Shortcut.Save()
+
+$ShortcutPath = "$env:PUBLIC\Desktop\AzureGov.lnk"
+$TargetPath = "https://portal.azure.us"
+
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = $TargetPath
+$Shortcut.IconLocation = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe, 0"  # Optional: Set browser icon
+$Shortcut.Save()
+
 # Install Kubectl
 Write-Host 'Installing kubectl'
 $expression = "choco install kubernetes-cli -y --limit-output"
@@ -1515,6 +1533,12 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 
 Unregister-ScheduledTask -TaskName "LocalBoxLogonScript" -Confirm:$false
 Unregister-ScheduledTask -TaskName 'Pester tests' -Confirm:$false
+
+$Items = Get-ChildItem -Path "$Env:ProgramFiles\WindowsPowerShell\Modules" | Where-Object {$_.Name -like "Az.*"}
+foreach ($Item in $Items)
+{
+    Remove-Item -Path $Item.FullName -Recurse -Force
+}
 
 Stop-Transcript
 
