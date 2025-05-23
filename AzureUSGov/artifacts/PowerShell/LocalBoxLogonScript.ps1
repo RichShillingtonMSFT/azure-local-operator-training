@@ -44,8 +44,8 @@ if ($null -eq $roleAssignment) {
 # Configure VNet DNS servers
 #####################################################################
 $dnsServers = @("$($LocalBoxConfig.vmDNS)", "168.63.129.16")
-$VNet = Get-AzVirtualNetwork -ResourceGroupName $env:resourceGroup
-$VNet.DhcpOptions.DnsServers = $dnsServers
+$VNet = Get-AzVirtualNetwork -ResourceGroupName $env:resourceGroup -Name 'LocalBox-VNet'
+$VNet.DhcpOptions
 Set-AzVirtualNetwork -VirtualNetwork $vnet
 
 #############################################################
