@@ -491,7 +491,7 @@ function Set-AzLocalNodeVHDX {
     Write-Host "Mounting VHDX file at $path"
     $partition = Mount-VHD -Path $path -Passthru | Get-Disk | Get-Partition -PartitionNumber 3
     if (!$partition.DriveLetter) {
-        $MountedDrive = "Y"
+        $MountedDrive = "V"
         $partition | Set-Partition -NewDriveLetter $MountedDrive
     }
     else {
