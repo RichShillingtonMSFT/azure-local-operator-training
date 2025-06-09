@@ -1408,11 +1408,14 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 
 Write-Host "[Build cluster - Step 10/11] Running bootstrap on AzL Hosts..." -ForegroundColor Green
 
-foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
-    Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {
-        powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\ImageComposition\Scripts\scheduledTaskRunner.ps1'"
-        powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\BootstrapPackage\bootstrap\content\Bootstrap-Setup.ps1 -Install'"
-    }
+Invoke-Command -VMName $LocalBoxConfig.NodeHostConfig[0].HostName -Credential $LocalCred -ScriptBlock {
+    powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\ImageComposition\Scripts\scheduledTaskRunner.ps1'"
+    powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\BootstrapPackage\bootstrap\content\Bootstrap-Setup.ps1 -Install'"
+}
+
+Invoke-Command -VMName $LocalBoxConfig.NodeHostConfig[1].HostName -Credential $LocalCred -ScriptBlock {
+    powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\ImageComposition\Scripts\scheduledTaskRunner.ps1'"
+    powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\BootstrapPackage\bootstrap\content\Bootstrap-Setup.ps1 -Install'"
 }
 
 Move-Item 'C:\LocalBox\LabFiles' -Destination 'C:\' -Force
