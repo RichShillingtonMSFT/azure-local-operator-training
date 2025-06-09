@@ -1521,6 +1521,12 @@ foreach ($Item in $Items)
     Remove-Item -Path $Item.FullName -Recurse -Force
 }
 
+reg load "HKU\TempDefault" "C:\Users\Default\NTUSER.DAT"
+Set-ItemProperty -Path "Registry::HKU\TempDefault\Control Panel\Desktop" -Name Wallpaper -Value "C:\LocalBox\wallpaper.bmp"
+Set-ItemProperty -Path "Registry::HKU\TempDefault\Control Panel\Desktop" -Name WallpaperStyle -Value "10"
+Set-ItemProperty -Path "Registry::HKU\TempDefault\Control Panel\Desktop" -Name TileWallpaper -Value "0"
+reg unload "HKU\TempDefault"
+
 Stop-Transcript
 
 Add-Computer -ComputerName localhost -LocalCredential $localCred -DomainName $LocalBoxConfig.SDNDomainFQDN -Credential $domainCred -Restart -Force

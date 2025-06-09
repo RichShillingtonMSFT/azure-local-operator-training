@@ -1406,55 +1406,92 @@ if ($null -ne $tags) {
 $null = Set-AzResourceGroup -ResourceGroupName $env:resourceGroup -Tag $tags
 $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:resourceGroup -ResourceType 'microsoft.compute/virtualmachines' -Tag $tags -Force
 
-Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {
-    Install-WindowsFeature -Name  RSAT-ADDS -IncludeAllSubFeature -IncludeManagementTools | Out-Null
-    Install-WindowsFeature -Name  GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null
-    Install-WindowsFeature -Name  RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Write-Host "[Build cluster - Step 10/11] Running bootstrap on AzL Hosts..." -ForegroundColor Green
+
+foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
+    Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {
+        powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\ImageComposition\Scripts\scheduledTaskRunner.ps1'"
+        powershell.exe -ExecutionPolicy Unrestricted -Command "C:\startupScriptsWrapper.ps1 'C:\BootstrapPackage\bootstrap\content\Bootstrap-Setup.ps1 -Install'"
+    }
 }
 
-$Session = New-PSSession -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred
-Copy-Item -Path 'C:\LocalBox\Lab Files' -Destination 'c:\' -ToSession $Session -Recurse -Force
-Remove-PSSession -Session $Session
+Move-Item 'C:\LocalBox\LabFiles' -Destination 'C:\' -Force
 
-Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {
-    # Disable Edge 'First Run' Setup
-    Write-Host "Configuring Microsoft Edge."
-    $edgePolicyRegistryPath = 'HKLM:SOFTWARE\Policies\Microsoft\Edge'
-    $firstRunRegistryName = 'HideFirstRunExperience'
-    $firstRunRegistryValue = '0x00000001'
-    $savePasswordRegistryName = 'PasswordManagerEnabled'
-    $savePasswordRegistryValue = '0x00000000'
+Write-Host "[Build cluster - Step 11/11] Configuring Host VM..." -ForegroundColor Green
 
-    if (-NOT (Test-Path -Path $edgePolicyRegistryPath)) {
-      New-Item -Path $edgePolicyRegistryPath -Force | Out-Null
-    }
+Install-WindowsFeature -Name RSAT-ADDS -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Install-WindowsFeature -Name GPMC -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Install-WindowsFeature -Name RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell -IncludeAllSubFeature -IncludeManagementTools | Out-Null
+Install-WindowsFeature -Name RSAT-DNS-Server | Out-Null
 
-    New-ItemProperty -Path $edgePolicyRegistryPath -Name $firstRunRegistryName -Value $firstRunRegistryValue -PropertyType DWORD -Force
-    New-ItemProperty -Path $edgePolicyRegistryPath -Name $savePasswordRegistryName -Value $savePasswordRegistryValue -PropertyType DWORD -Force
+# Disable Edge 'First Run' Setup
+Write-Host "Configuring Microsoft Edge."
+$edgePolicyRegistryPath = 'HKLM:SOFTWARE\Policies\Microsoft\Edge'
+$firstRunRegistryName = 'HideFirstRunExperience'
+$firstRunRegistryValue = '0x00000001'
+$savePasswordRegistryName = 'PasswordManagerEnabled'
+$savePasswordRegistryValue = '0x00000000'
 
-    # Disable Server Manager WAC prompt
-    Write-Host "Disabling Server Manager WAC prompt."
-    $RegistryPath = "HKLM:\SOFTWARE\Microsoft\ServerManager"
-    $Name = "DoNotPopWACConsoleAtSMLaunch"
-    $Value = "1"
-    if (-not (Test-Path $RegistryPath)) {
-      New-Item -Path $RegistryPath -Force | Out-Null
-    }
-    New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType DWORD -Force
-
-    $url = "https://github.com/PowerShell/PowerShell/releases/latest"
-    $latestVersion = (Invoke-WebRequest -UseBasicParsing -Uri $url).Content | Select-String -Pattern "v[0-9]+\.[0-9]+\.[0-9]+" | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Value
-    $downloadUrl = "https://github.com/PowerShell/PowerShell/releases/download/$latestVersion/PowerShell-$($latestVersion.Substring(1,5))-win-x64.msi"
-    Invoke-WebRequest -UseBasicParsing -Uri $downloadUrl -OutFile .\PowerShell7.msi
-    Start-Process msiexec.exe -Wait -ArgumentList '/I PowerShell7.msi /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1 ADD_PATH=1'
-    Remove-Item .\PowerShell7.msi
+if (-NOT (Test-Path -Path $edgePolicyRegistryPath)) {
+    New-Item -Path $edgePolicyRegistryPath -Force | Out-Null
 }
 
-Invoke-Command -VMName $($LocalBoxConfig.MgmtHostConfig.Hostname) -Credential $LocalCred -ScriptBlock {Add-Computer -ComputerName localhost -LocalCredential $Using:localCred -DomainName $Using:LocalBoxConfig.SDNDomainFQDN -Credential $Using:domainCred -Restart -Force -PassThru -Verbose}
+New-ItemProperty -Path $edgePolicyRegistryPath -Name $firstRunRegistryName -Value $firstRunRegistryValue -PropertyType DWORD -Force
+New-ItemProperty -Path $edgePolicyRegistryPath -Name $savePasswordRegistryName -Value $savePasswordRegistryValue -PropertyType DWORD -Force
 
-#foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
-#    Invoke-Command -VMName $VM.Hostname -Credential $LocalCred -ScriptBlock {Resize-Partition -DriveLetter C -Size (Get-PartitionSupportedSize -DriveLetter C).SizeMax}
-#}
+# Disable Server Manager WAC prompt
+Write-Host "Disabling Server Manager WAC prompt."
+$RegistryPath = "HKLM:\SOFTWARE\Microsoft\ServerManager"
+$Name = "DoNotPopWACConsoleAtSMLaunch"
+$Value = "1"
+if (-not (Test-Path $RegistryPath)) {
+    New-Item -Path $RegistryPath -Force | Out-Null
+}
+New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType DWORD -Force
+
+# Install Chocolatey
+Write-Host "Installing Chocolatey"
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+Start-Sleep -Seconds 10
+
+# Create Shortcut for Hyper-V Manager
+Write-Host "Creating Shortcut for Hyper-V Manager"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk" -Destination "C:\Users\Public\Desktop"
+
+# Create Shortcut for Failover-Cluster Manager
+Write-Host "Creating Shortcut for Failover-Cluster Manager"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Failover Cluster Manager.lnk" -Destination "C:\Users\Public\Desktop"
+
+# Create Shortcut for DNS
+Write-Host "Creating Shortcut for DNS Manager"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\DNS.lnk" -Destination "C:\Users\Public\Desktop"
+
+# Create Shortcut for Active Directory Users and Computers
+Write-Host "Creating Shortcut for AD Users and Computers"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk" -Destination "C:\Users\Public\Desktop"
+
+$ShortcutPath = "$env:PUBLIC\Desktop\Azure.lnk"
+$TargetPath = "https://portal.azure.com"
+
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = $TargetPath
+$Shortcut.IconLocation = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe, 0"  # Optional: Set browser icon
+$Shortcut.Save()
+
+$ShortcutPath = "$env:PUBLIC\Desktop\AzureGov.lnk"
+$TargetPath = "https://portal.azure.us"
+
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = $TargetPath
+$Shortcut.IconLocation = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe, 0"  # Optional: Set browser icon
+$Shortcut.Save()
+
+# Install Kubectl
+Write-Host 'Installing kubectl'
+$expression = "choco install kubernetes-cli -y --limit-output"
+Invoke-Expression $expression
 
 $endtime = Get-Date
 $timeSpan = New-TimeSpan -Start $starttime -End $endtime
@@ -1475,6 +1512,23 @@ if ($null -ne $tags) {
 $null = Set-AzResourceGroup -ResourceGroupName $env:resourceGroup -Tag $tags
 $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:resourceGroup -ResourceType 'microsoft.compute/virtualmachines' -Tag $tags -Force
 
+Unregister-ScheduledTask -TaskName "LocalBoxLogonScript" -Confirm:$false
+Unregister-ScheduledTask -TaskName 'Pester tests' -Confirm:$false
+
+$Items = Get-ChildItem -Path "$Env:ProgramFiles\WindowsPowerShell\Modules" | Where-Object {$_.Name -like "Az.*"}
+foreach ($Item in $Items)
+{
+    Remove-Item -Path $Item.FullName -Recurse -Force
+}
+
+reg load "HKU\TempDefault" "C:\Users\Default\NTUSER.DAT"
+Set-ItemProperty -Path "Registry::HKU\TempDefault\Control Panel\Desktop" -Name Wallpaper -Value "C:\LocalBox\wallpaper.bmp"
+Set-ItemProperty -Path "Registry::HKU\TempDefault\Control Panel\Desktop" -Name WallpaperStyle -Value "10"
+Set-ItemProperty -Path "Registry::HKU\TempDefault\Control Panel\Desktop" -Name TileWallpaper -Value "0"
+reg unload "HKU\TempDefault"
+
 Stop-Transcript
+
+Add-Computer -ComputerName localhost -LocalCredential $localCred -DomainName $LocalBoxConfig.SDNDomainFQDN -Credential $domainCred -Restart -Force
 
 #endregion
