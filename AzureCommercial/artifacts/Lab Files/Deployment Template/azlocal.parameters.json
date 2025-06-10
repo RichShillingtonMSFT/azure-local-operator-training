@@ -11,9 +11,6 @@
     "clusterName": {
       "value": "Student##-CL"
     },
-    "location": {
-      "value": "[resourceGroup().location]"
-    },
     "tenantId": {
       "value": "Put Tenant Id Here"
     },
