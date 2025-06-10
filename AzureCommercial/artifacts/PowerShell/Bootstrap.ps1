@@ -121,8 +121,8 @@ Invoke-WebRequest ($templateBaseUrl + "artifacts/jumpstart-user-secret.yaml") -O
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/dsc/packages.dsc.yml") -OutFile "$($LocalBoxConfig.Paths["DSCDir"])\packages.dsc.yml"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/dsc/hyper-v.dsc.yml") -OutFile "$($LocalBoxConfig.Paths["DSCDir"])\hyper-v.dsc.yml"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/WinGet.ps1") -OutFile "$LocalBoxPath\WinGet.ps1"
-Invoke-WebRequest ($templateBaseUrl + "artifacts/LabFiles/Deployment Template/azlocal.json") -OutFile "$LocalBoxPath\Lab Files\Deployment Template\azlocal.json"
-Invoke-WebRequest ($templateBaseUrl + "artifacts/LabFiles/Deployment Template/azlocal.parameters.json") -OutFile "$LocalBoxPath\Lab Files\Deployment Template\azlocal.parameters.json"
+Invoke-WebRequest ($templateBaseUrl + "artifacts/LabFiles/Deployment Template/azlocal.json") -OutFile "$LocalBoxPath\LabFiles\Deployment Template\azlocal.json"
+Invoke-WebRequest ($templateBaseUrl + "artifacts/LabFiles/Deployment Template/azlocal.parameters.json") -OutFile "$LocalBoxPath\LabFiles\Deployment Template\azlocal.parameters.json"
 
 # Replace password and DNS placeholder
 Write-Host "Updating config placeholders with injected values."
