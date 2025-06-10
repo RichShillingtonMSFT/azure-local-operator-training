@@ -1517,14 +1517,45 @@ if ($null -ne $tags) {
 $null = Set-AzResourceGroup -ResourceGroupName $env:resourceGroup -Tag $tags
 $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:resourceGroup -ResourceType 'microsoft.compute/virtualmachines' -Tag $tags -Force
 
+#############################################################
+# Install VSCode extensions
+#############################################################
+
+# Define the download URL for the latest VSCode system installer
+$installerUrl = "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64"
+
+# Define the path to save the installer
+$installerPath = "$env:TEMP\VSCodeSetup.exe"
+
+# Download the installer
+Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
+
+# Install VSCode silently for all users
+Start-Process -FilePath $installerPath -ArgumentList "/verysilent /norestart" -Wait
+
+# Clean up the installer
+Remove-Item -Path $installerPath -Force
+
+Write-Host "VSCode has been installed successfully for all users."
+
+# Define the directory you want to add
+$CodePath = "C:\Program Files\Microsoft VS Code\bin"
+
+$CurrentLocation = (Get-Location).Path
+
+Set-Location $CodePath
+
+Write-Host "[$(Get-Date -Format t)] INFO: Installing VSCode extensions: " + ($LocalBoxConfig.VSCodeExtensions -join ', ') -ForegroundColor Gray
+foreach ($extension in $LocalBoxConfig.VSCodeExtensions) {
+    $WarningPreference = "SilentlyContinue"
+    .\code --install-extension $extension 2>&1 | Out-File -Append -FilePath ($LocalBoxConfig.Paths.LogsDir + "\Tools.log")
+    $WarningPreference = "Continue"
+}
+
+Set-Location $CurrentLocation
+
 Unregister-ScheduledTask -TaskName "LocalBoxLogonScript" -Confirm:$false
 Unregister-ScheduledTask -TaskName 'Pester tests' -Confirm:$false
-
-$Items = Get-ChildItem -Path "$Env:ProgramFiles\WindowsPowerShell\Modules" | Where-Object {$_.Name -like "Az.*"}
-foreach ($Item in $Items)
-{
-    Remove-Item -Path $Item.FullName -Recurse -Force
-}
 
 New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\Control Panel" -Name Desktop -Force
 
@@ -1537,8 +1568,15 @@ Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Control Panel\
 Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Control Panel\Desktop" `
     -Name TileWallpaper -Value "0"
 
+Add-Computer -ComputerName localhost -LocalCredential $localCred -DomainName $LocalBoxConfig.SDNDomainFQDN -Credential $domainCred -Force
+
+$Items = Get-ChildItem -Path "$Env:ProgramFiles\WindowsPowerShell\Modules" | Where-Object {$_.Name -like "Az.*"}
+foreach ($Item in $Items)
+{
+    Remove-Item -Path $Item.FullName -Recurse -Force
+}
+
 Stop-Transcript
 
-Add-Computer -ComputerName localhost -LocalCredential $localCred -DomainName $LocalBoxConfig.SDNDomainFQDN -Credential $domainCred -Restart -Force
-
+Restart-Computer -ComputerName localhost -Force
 #endregion
