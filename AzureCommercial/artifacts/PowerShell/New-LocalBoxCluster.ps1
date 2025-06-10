@@ -1531,7 +1531,7 @@ $installerPath = "$env:TEMP\VSCodeSetup.exe"
 Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
 
 # Install VSCode silently for all users
-Start-Process -FilePath $installerPath -ArgumentList "/verysilent /norestart" -Wait
+Start-Process -FilePath $installerPath -ArgumentList "/verysilent /norestart /mergetasks=!runcode" -Wait
 
 # Clean up the installer
 Remove-Item -Path $installerPath -Force
@@ -1551,6 +1551,10 @@ foreach ($extension in $LocalBoxConfig.VSCodeExtensions) {
     .\code --install-extension $extension 2>&1 | Out-File -Append -FilePath ($LocalBoxConfig.Paths.LogsDir + "\Tools.log")
     $WarningPreference = "Continue"
 }
+
+# Create Shortcut for VS Code
+Write-Host "Creating Shortcut for VS Code"
+Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio Code\Visual Studio Code.lnk" -Destination "C:\Users\Public\Desktop"
 
 Set-Location $CurrentLocation
 

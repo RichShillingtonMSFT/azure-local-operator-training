@@ -2,35 +2,35 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "deploymentMode": {
+      "value": "Validate"
+    },
     "keyVaultName": {
-      "value": "Student##-kv-30ee4"
-    },
-    "clusterWitnessStorageAccountName": {
-      "value": "student##6xvlepyiemea6"
-    },
-    "diagnosticStorageAccountName": {
-      "value": "student##diagsa30ee4"
+      "value": "Student##-KV"
     },
     "clusterName": {
-      "value": "student##cluster"
+      "value": "Student##-CL"
+    },
+    "location": {
+      "value": "[resourceGroup().location]"
+    },
+    "tenantId": {
+      "value": "Put Tenant Id Here"
+    },
+    "localAdminUserName": {
+      "value": "Administrator"
     },
     "localAdminPassword": {
-      "value": "Lab Password"
+      "value": "Enter lab password here"
     },
-    "AzureStackLCMAdminPassword": {
-      "value": "Lab Password"
+    "AzureStackLCMAdminUsername": {
+      "value": "AzLDeploymentUser"
     },
-    "arbDeploymentAppID": {
-      "value": ""
-    },
-    "arbDeploymentAppSecret": {
-      "value": ""
-    },
-    "arbDeploymentSPNObjectID": {
-      "value": ""
+    "AzureStackLCMAdminPasssword": {
+      "value": "Enter lab password here"
     },
     "hciResourceProviderObjectID": {
-      "value": ""
+      "value": "Enter Microsoft.AzureStackHCI Resource Provider Object Id Here"
     },
     "arcNodeResourceIds": {
       "value": [
@@ -38,23 +38,65 @@
         ""
       ]
     },
-    "namingPrefix": {
-      "value": "AzL"
+    "domainFqdn": {
+      "value": "jumpstart.local"
     },
-    "localAdminUserName": {
-      "value": "Administrator"
+    "namingPrefix": {
+      "value": "hci"
+    },
+    "adouPath": {
+      "value": "OU=azurelocal,DC=jumpstart,DC=local"
     },
     "witnessType": {
       "value": "Cloud"
     },
-    "AzureStackLCMAdminUsername": {
-      "value": "AzLDeploymentUser"
+    "securityLevel": {
+      "value": "Recommended"
     },
-    "domainFqdn": {
-      "value": "jumpstart.local"
+    "driftControlEnforced": {
+      "value": true
     },
-    "adouPath": {
-      "value": "OU=azurelocal,DC=jumpstart,DC=local"
+    "credentialGuardEnforced": {
+      "value": true
+    },
+    "smbSigningEnforced": {
+      "value": true
+    },
+    "smbClusterEncryption": {
+      "value": false
+    },
+    "bitlockerBootVolume": {
+      "value": true
+    },
+    "bitlockerDataVolumes": {
+      "value": true
+    },
+    "wdacEnforced": {
+      "value": true
+    },
+    "streamingDataClient": {
+      "value": true
+    },
+    "euLocation": {
+      "value": false,l
+    },
+    "createNewKeyVault": {
+      "value": true
+    },
+    "softDeleteRetentionDays": {
+      "value": 30
+    },
+    "logsRetentionInDays": {
+      "value": 30
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "episodicDataUpload": {
+      "value": true
+    },
+    "configurationMode": {
+      "value": "Express"
     },
     "subnetMask": {
       "value": "255.255.255.0"
@@ -71,11 +113,26 @@
     "dnsServers": {
       "value": ["192.168.1.254"]
     },
-    "physicalNodesSettings": {
-      "value": [ { "name": "AzLHOST1", "ipv4Address": "192.168.1.12" }, { "name": "AzLHOST2", "ipv4Address": "192.168.1.13" } ]
-    },
-    "storageConnectivitySwitchless": {
+    "useDhcp": {
       "value": false
+    },
+    "physicalNodesSettings": {
+      "value": [ 
+        { 
+          "name": "AzLHOST1",
+          "ipv4Address": "192.168.1.12" 
+        },
+        {
+          "name": "AzLHOST2",
+          "ipv4Address": "192.168.1.13"
+        } 
+      ]
+    },
+    "networkingType": {
+      "value": "switchlessMultiServerDeployment"
+    },
+    "networkingPattern": {
+      "value": "hyperConverged"
     },
     "intentList": {
       "value": [
@@ -149,8 +206,8 @@
         }
       ]
     },
-    "networkingType": {
-      "value": "switchlessMultiServerDeployment"
+    "storageConnectivitySwitchless": {
+      "value": false
     },
     "enableStorageAutoIp": {
       "value": true
@@ -158,8 +215,26 @@
     "customLocation": {
       "value": "jumpstart"
     },
-    "deploymentMode": {
-      "value": "Validate"
+    "sbeVersion": {
+      "value": null
+    },
+    "sbeFamily": {
+      "value": null
+    },
+    "sbePublisher": {
+      "value": null
+    },
+    "sbeManifestSource": {
+      "value": null
+    },
+    "sbeManifestCreationDate": {
+      "value": null
+    },
+    "partnerProperties": {
+      "value": []
+    },
+    "partnerCredentiallist": {
+      "value": []
     }
   }
 }
