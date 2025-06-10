@@ -54,7 +54,7 @@ Remove-Item C:\WACCert -Recurse -Force
 # Download Windows Admin Center
 $parameters = @{
      Source = "https://aka.ms/WACdownload"
-     Destination = "C:\LabFiles\WindowsAdminCenter.exe"
+     Destination = "C:\LabFiles\WAC\WindowsAdminCenter.exe"
 }
 
 Start-BitsTransfer @parameters
@@ -67,10 +67,10 @@ Write-Host "WACPort: 443"
 $WindowsAdminCenterGateway = "https://$($ENV:Computername).$($env:USERDNSDOMAIN)"
 Write-Host $WindowsAdminCenterGateway
 Write-Host "Installing and Configuring Windows Admin Center"
-$PathResolve = Resolve-Path -Path 'C:\LabFiles\WindowsAdminCenter*.exe'
+$PathResolve = Resolve-Path -Path 'C:\LabFiles\WAC\WindowsAdminCenter*.exe'
 $arguments = "/VERYSILENT /port:443 /ALLUSERS /sslthumbprint:$pfxThumbPrint /norestart"
 Start-Process -FilePath $PathResolve -ArgumentList $arguments -PassThru | Wait-Process
 Import-Module "$env:ProgramFiles\WindowsAdminCenter\PowerShellModules\Microsoft.WindowsAdminCenter.Configuration"
-$WacCert = Set-WACCertificateSubjectName -Thumbprint $pfxThumbPrint
+Set-WACCertificateSubjectName -Thumbprint $pfxThumbPrint
 Set-WACCertificateAcl -SubjectName $pfxSubjectName -Verbose
 Restart-Service -Name WindowsAdminCenter
