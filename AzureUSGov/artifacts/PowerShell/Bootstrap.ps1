@@ -102,10 +102,6 @@ Start-Transcript -Path "$($LocalBoxConfig.Paths["LogsDir"])\Bootstrap.log"
 Write-Host "Extending C:\ partition to the maximum size"
 Resize-Partition -DriveLetter C -Size $(Get-PartitionSupportedSize -DriveLetter C).SizeMax
 
-ew-Item -Path "$LocalBoxPath\LabFiles" -ItemType directory -Force | Out-Null
-New-Item -Path "$LocalBoxPath\LabFiles\Deployment Template" -ItemType directory -Force | Out-Null
-New-Item -Path "$LocalBoxPath\LabFiles\WAC" -ItemType directory -Force | Out-Null
-
 Write-Host "Downloading Azure Local configuration scripts"
 Invoke-WebRequest "https://raw.githubusercontent.com/Azure/arc_jumpstart_docs/main/img/wallpaper/localbox_wallpaper_dark.png" -OutFile $LocalBoxPath\wallpaper.png
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/LocalBoxLogonScript.ps1") -OutFile $LocalBoxPath\LocalBoxLogonScript.ps1
@@ -122,9 +118,6 @@ Invoke-WebRequest ($templateBaseUrl + "artifacts/jumpstart-user-secret.yaml") -O
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/dsc/packages.dsc.yml") -OutFile "$($LocalBoxConfig.Paths["DSCDir"])\packages.dsc.yml"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/dsc/hyper-v.dsc.yml") -OutFile "$($LocalBoxConfig.Paths["DSCDir"])\hyper-v.dsc.yml"
 Invoke-WebRequest ($templateBaseUrl + "artifacts/PowerShell/WinGet.ps1") -OutFile "$LocalBoxPath\WinGet.ps1"
-Invoke-WebRequest ($templateBaseUrl + "artifacts/LabFiles/Deployment Template/azlocal.json") -OutFile "$LocalBoxPath\LabFiles\Deployment Template\azlocal.json"
-Invoke-WebRequest ($templateBaseUrl + "artifacts/LabFiles/Deployment Template/azlocal.parameters.json") -OutFile "$LocalBoxPath\LabFiles\Deployment Template\azlocal.parameters.json"
-Invoke-WebRequest ($templateBaseUrl + "artifacts/LabFiles/WAC/Install-WAC.ps1") -OutFile "$LocalBoxPath\LabFiles\WAC\Install-WAC.ps1"
 
 # Replace password and DNS placeholder
 Write-Host "Updating config placeholders with injected values."

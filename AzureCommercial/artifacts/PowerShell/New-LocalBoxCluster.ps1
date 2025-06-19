@@ -1242,6 +1242,11 @@ else {
     throw
 }
 
+azcopy cp 'https://azlimagestoresa.blob.core.windows.net/labfiles/LabFiles.zip' "$($LocalBoxConfig.Paths.TempDir)\LabFiles.zip" --recursive=true --check-length=false --log-level=ERROR
+New-Item -Path 'C:\LabFiles' -ItemType Directory -Force
+Expand-Archive -Path "$($LocalBoxConfig.Paths.TempDir)\LabFiles.zip" -DestinationPath 'C:\LabFiles' -Force
+Remove-Item "$($LocalBoxConfig.Paths.TempDir)\LabFiles.zip" -Force
+
 # Set credentials
 $localCred = new-object -typename System.Management.Automation.PSCredential `
     -argumentlist "Administrator", (ConvertTo-SecureString $LocalBoxConfig.SDNAdminPassword -AsPlainText -Force)
@@ -1417,8 +1422,6 @@ Invoke-Command -VMName $LocalBoxConfig.NodeHostConfig[1].HostName -Credential $L
 }
 
 Start-Sleep -Seconds 120
-
-Move-Item 'C:\LocalBox\LabFiles' -Destination 'C:\' -Force
 
 Write-Host "[Build cluster - Step 11/11] Configuring Host VM..." -ForegroundColor Green
 
