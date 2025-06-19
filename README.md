@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-*** Software ***
+#### Software
 
 - PowerShell 7: https://aka.ms/powershell-release?tag=stable
 - Azure PowerShell Modules: https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell?view=azps-14.1.0
@@ -10,12 +10,12 @@
 - Azure CLI: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
 - Bicep: https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install
 
-*** Azure ***
+#### Azure
 
 - Sufficient compute capacity (vCPU quotas) for the chosen VM SKU (Standard E32s v5 or v6)
 - Owner permissions on your Subscription
 
-*** Deployment ***
+#### Deployment
 
 1. Create a Service Principal with a Client Secret.
 2. Make note of the Service Principal Client ID and Secret.
