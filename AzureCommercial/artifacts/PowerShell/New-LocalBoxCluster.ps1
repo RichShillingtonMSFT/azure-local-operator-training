@@ -398,7 +398,7 @@ function New-AzLocalNodeVM {
     Add-VMHardDiskDrive -Path "$HostVMPath\$Name-S2D_Disk5.vhdx" -VMName $Name | Out-Null
     Add-VMHardDiskDrive -Path "$HostVMPath\$Name-S2D_Disk6.vhdx" -VMName $Name | Out-Null
 
-    Set-VM -Name $Name -ProcessorCount 20 -AutomaticStartAction Start
+    Set-VM -Name $Name -ProcessorCount 24 -AutomaticStartAction Start
     Get-VMNetworkAdapter -VMName $Name | Rename-VMNetworkAdapter -NewName "SDN"
     Get-VMNetworkAdapter -VMName $Name | Set-VMNetworkAdapter -DeviceNaming On -StaticMacAddress  ("{0:D12}" -f ( Get-Random -Minimum 0 -Maximum 99999 ))
     # Add-VMNetworkAdapter -VMName $Name -Name SDN2 -DeviceNaming On -SwitchName $VMSwitch
@@ -1301,8 +1301,8 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 
 # First create the Management VM (AzSMGMT)
 Write-Host "[Build cluster - Step 3/11] Creating Management VM (AzSMGMT)..." -ForegroundColor Green
-#$mgmtMac = New-ManagementVM -Name $($LocalBoxConfig.MgmtHostConfig.Hostname) -VHDXPath "$HostVMPath\GUI.vhdx" -VMSwitch $InternalSwitch -LocalBoxConfig $LocalBoxConfig
-#Set-MGMTVHDX -VMMac $mgmtMac -LocalBoxConfig $LocalBoxConfig
+$mgmtMac = New-ManagementVM -Name $($LocalBoxConfig.MgmtHostConfig.Hostname) -VHDXPath "$HostVMPath\GUI.vhdx" -VMSwitch $InternalSwitch -LocalBoxConfig $LocalBoxConfig
+Set-MGMTVHDX -VMMac $mgmtMac -LocalBoxConfig $LocalBoxConfig
 
 # Create the Azure Local node VMs
 Write-Host "[Build cluster - Step 4/11] Creating Azure Local node VMs (AzLHOSTx)..." -ForegroundColor Green
@@ -1314,7 +1314,7 @@ foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
 # Start Virtual Machines
 Write-Host "[Build cluster - Step 5/11] Starting VMs..." -ForegroundColor Green
 Write-Host "Starting VM: $($LocalBoxConfig.MgmtHostConfig.Hostname)"
-#Start-VM -Name $LocalBoxConfig.MgmtHostConfig.Hostname
+Start-VM -Name $LocalBoxConfig.MgmtHostConfig.Hostname
 foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
     Set-VMMemory -VMName $VM.Hostname -DynamicMemoryEnabled $false
     Set-VM -VMName $VM.Hostname -CheckpointType Disabled
