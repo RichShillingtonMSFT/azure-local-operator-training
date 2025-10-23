@@ -43,7 +43,15 @@ Write-Output 'Installing WinGet packages and DSC configurations'
 $winget = Join-Path -Path $env:LOCALAPPDATA -ChildPath Microsoft\WindowsApps\winget.exe
 
 # Apply WinGet Configuration files
-& $winget configure --file "$($Env:LocalBoxDir)\DSC\packages.dsc.yml" --accept-configuration-agreements --disable-interactivity
+#& $winget configure --file "$($Env:LocalBoxDir)\DSC\packages.dsc.yml" --accept-configuration-agreements --disable-interactivity
+winget install --exact --id Git.Git --accept-package-agreements --accept-source-agreements
+winget install --exact --id Microsoft.VisualStudioCode --accept-package-agreements --accept-source-agreements
+winget install --exact --id Microsoft.AzureCLI --accept-package-agreements --accept-source-agreements
+winget install --exact --id Microsoft.PowerShell --accept-package-agreements --accept-source-agreements
+winget install --exact --id Kubernetes.kubectl --accept-package-agreements --accept-source-agreements
+winget install --exact --id Helm.Helm --accept-package-agreements --accept-source-agreements
+winget install --exact --id Microsoft.Sysinternals.BGInfo --accept-package-agreements --accept-source-agreements
+winget install --exact --id Microsoft.Azure.AZCopy.10 --accept-package-agreements --accept-source-agreements
 & $winget configure --file "$($Env:LocalBoxDir)\DSC\hyper-v.dsc.yml" --accept-configuration-agreements --disable-interactivity
 
 # Start remaining logon scripts
