@@ -1301,8 +1301,8 @@ $null = Set-AzResource -ResourceName $env:computername -ResourceGroupName $env:r
 
 # First create the Management VM (AzSMGMT)
 Write-Host "[Build cluster - Step 3/11] Creating Management VM (AzSMGMT)..." -ForegroundColor Green
-$mgmtMac = New-ManagementVM -Name $($LocalBoxConfig.MgmtHostConfig.Hostname) -VHDXPath "$HostVMPath\GUI.vhdx" -VMSwitch $InternalSwitch -LocalBoxConfig $LocalBoxConfig
-Set-MGMTVHDX -VMMac $mgmtMac -LocalBoxConfig $LocalBoxConfig
+#$mgmtMac = New-ManagementVM -Name $($LocalBoxConfig.MgmtHostConfig.Hostname) -VHDXPath "$HostVMPath\GUI.vhdx" -VMSwitch $InternalSwitch -LocalBoxConfig $LocalBoxConfig
+#Set-MGMTVHDX -VMMac $mgmtMac -LocalBoxConfig $LocalBoxConfig
 
 # Create the Azure Local node VMs
 Write-Host "[Build cluster - Step 4/11] Creating Azure Local node VMs (AzLHOSTx)..." -ForegroundColor Green
@@ -1314,7 +1314,7 @@ foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
 # Start Virtual Machines
 Write-Host "[Build cluster - Step 5/11] Starting VMs..." -ForegroundColor Green
 Write-Host "Starting VM: $($LocalBoxConfig.MgmtHostConfig.Hostname)"
-Start-VM -Name $LocalBoxConfig.MgmtHostConfig.Hostname
+#Start-VM -Name $LocalBoxConfig.MgmtHostConfig.Hostname
 foreach ($VM in $LocalBoxConfig.NodeHostConfig) {
     Set-VMMemory -VMName $VM.Hostname -DynamicMemoryEnabled $false
     Set-VM -VMName $VM.Hostname -CheckpointType Disabled
