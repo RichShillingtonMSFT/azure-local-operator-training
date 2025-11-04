@@ -42,19 +42,19 @@
 
     MgmtHostConfig = @{
         Hostname = "AzLMGMT"
-        IP       = "192.168.1.11/24"
+        IP       = "192.168.1.11/20"
     }
 
     NodeHostConfig = @(
         @{
             Hostname    = "AzLHOST1"
-            IP          = "192.168.1.12/24"
+            IP          = "192.168.1.12/20"
             StorageAIP  = "10.71.1.10"
             StorageBIP  = "10.71.2.10"
         },
         @{
             Hostname    = "AzLHOST2"
-            IP          = "192.168.1.13/24"
+            IP          = "192.168.1.13/20"
             StorageAIP  = "10.71.1.11"
             StorageBIP  = "10.71.2.11"
         }
@@ -82,14 +82,14 @@
     GUIProductKey                        = "WX4NM-KYWYW-QJJR4-XV3QB-6VM33"        # Product key for Windows Server 2019 (Desktop Experience) Datacenter Installation
 
     # SDN Lab Domain
-    SDNDomainFQDN                        = "jumpstart.local"                      # Limit name (not the .com) to 14 characters as the name will be used as the NetBIOS name.
+    SDNDomainFQDN                        = "azl.local"                      # Limit name (not the .com) to 14 characters as the name will be used as the NetBIOS name.
     DCName                               = "jumpstartdc"                          # Name of the domain controller virtual machine (limit to 14 characters)
 
     # NAT Configuration
-    natHostSubnet                        = "192.168.128.0/24"
+    natHostSubnet                        = "192.168.128.0/20"
     natHostVMSwitchName                  = "InternalNAT"
     natConfigure                         = $true
-    natSubnet                            = "192.168.46.0/24"                      # This value is the subnet is the NAT router will use to route to  AzSMGMT to access the Internet. It can be any /24 subnet and is only used for routing.
+    natSubnet                            = "192.168.46.0/20"                      # This value is the subnet is the NAT router will use to route to  AzSMGMT to access the Internet. It can be any /20 subnet and is only used for routing.
     natDNS                               = "%staging-natDNS%"                     # Do not change - can be configured by passing the optioanl natDNS parameter to the ARM deployment.
 
     # Global MTU
@@ -100,7 +100,7 @@
     ConfigureBGPpeering                  = $true                                  # Peers the GW and MUX VMs with the BGP-ToR-Router automatically if ProvisionNC = $true
 
     ################################################################################################################
-    # Edit at your own risk. If you edit the subnets, ensure that you keep using the PreFix /24.                   #
+    # Edit at your own risk. If you edit the subnets, ensure that you keep using the PreFix /20.                   #
     ################################################################################################################
 
     # AzSMGMT Management VM's Memory Settings
@@ -121,17 +121,17 @@
     SDNLABRoute                          = "192.168.1.1"
 
     # Management IPs for Console and Domain Controller
-    DCIP                                 = "192.168.1.254/24"
-    WACIP                                = "192.168.1.9/24"
+    DCIP                                 = "192.168.1.254/20"
+    WACIP                                = "192.168.1.9/20"
     WACMAC                               = "10155D010B00"
 
     # Router Config
     BGPRouterName                        = "vm-router"
-    BGPRouterIP_MGMT                     = "192.168.1.1/24"
-    BGPRouterIP_ProviderNetwork          = "172.16.0.1/24"
-    BGPRouterIP_VLAN110                  = "10.10.0.1/24"
-    BGPRouterIP_VLAN200                  = "192.168.200.1/24"
-    BGPRouterIP_SimulatedInternet        = "131.127.0.1/24"
+    BGPRouterIP_MGMT                     = "192.168.1.1/20"
+    BGPRouterIP_ProviderNetwork          = "172.16.0.1/20"
+    BGPRouterIP_VLAN110                  = "10.10.0.1/20"
+    BGPRouterIP_VLAN200                  = "192.168.200.1/20"
+    BGPRouterIP_SimulatedInternet        = "131.127.0.1/20"
     BGPRouterASN                         = "65534"
 
     # VLANs
@@ -144,12 +144,12 @@
     StorageBVLAN                         = 712
 
     # Subnets
-    MGMTSubnet                           = "192.168.1.0/24"
+    MGMTSubnet                           = "192.168.1.0/20"
     storageAsubnet                       = "255.255.255.0"
     storageBsubnet                       = "255.255.255.0"
 
     # VIP Subnets
-    PublicVIPSubnet                      = "40.40.40.0/24"
+    PublicVIPSubnet                      = "40.40.40.0/20"
 
     # SDN ASN
     SDNASN                               = 64512
@@ -166,7 +166,7 @@
     AKSNodeEndIP                         = "10.10.0.199"
     AKSVIPStartIP                        = "10.10.0.10"
     AKSVIPEndIP                          = "10.10.0.100"
-    AKSIPPrefix                          = "10.10.0.0/24"
+    AKSIPPrefix                          = "10.10.0.0/20"
     AKSControlPlaneIP                    = "10.10.0.5"
     AKSGWIP                              = "10.10.0.1"
     AKSDNSIP                             = "192.168.1.254"
@@ -180,7 +180,7 @@
     clusterIpRangeStart                  = "192.168.1.100"
     clusterIpRangeEnd                    = "192.168.1.199"
     vmGateway                            = "192.168.200.1"
-    vmIpPrefix                           = "192.168.200.0/24"
+    vmIpPrefix                           = "192.168.200.0/20"
     vmDNS                                = "192.168.1.254"
     vmVLAN                               = "200"
 }
