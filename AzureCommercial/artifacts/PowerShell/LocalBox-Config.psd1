@@ -58,6 +58,12 @@
             StorageAIP  = "10.71.1.11"
             StorageBIP  = "10.71.2.11"
         }
+        @{
+            Hostname    = "AzLHOST3"
+            IP          = "192.168.1.14/24"
+            StorageAIP  = "10.71.1.12"
+            StorageBIP  = "10.71.2.12"
+        }
     )
 
     # SDN Lab Admin Password
@@ -65,7 +71,7 @@
 
     # VM Configuration
     NestedVMMemoryinGB                   = 96GB                                 # This value controls the amount of RAM for each Nested Hyper-V Host (AzSHOST1-2).
-    AzSMGMTMemoryinGB                    = 28GB                                  # This value controls the amount of RAM for the AzSMGMT Nested VM which contains only the Console, Router, Admincenter, and DC VMs.
+    AzSMGMTMemoryinGB                    = 24GB                                  # This value controls the amount of RAM for the AzSMGMT Nested VM which contains only the Console, Router, Admincenter, and DC VMs.
     AzSMGMTProcCount                     = 20
     InternalSwitch                       = "InternalSwitch"                      # Name of internal switch that the LocalBox VMs will use in Single Host mode.
     FabricSwitch                         = "vSwitch-Fabric"
@@ -109,7 +115,7 @@
     MEM_WAC                              = 10GB                                    # Memory provided for the Windows Admin Center VM
 
     # Cluster S2D Storage Disk Size (per disk)
-    S2D_Disk_Size                        = 170GB                                    # Disk size for each of the 4 dynamic VHD disks attached to the 3 AzSHOST VMs that will be used to create the SDNCLUSTER
+    S2D_Disk_Size                        = 500GB                                    # Disk size for each of the 4 dynamic VHD disks attached to the 3 AzSHOST VMs that will be used to create the SDNCLUSTER
 
     # Physical Host Internal IP
     PhysicalHostInternalIP               = "192.168.1.20"                          # IP Address assigned to Internal Switch vNIC in a Single Host Configuration
