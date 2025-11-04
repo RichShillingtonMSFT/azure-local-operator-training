@@ -25,14 +25,19 @@
     )
 
     # VSCode extensions
-    VSCodeExtensions        = @(
+    VSCodeExtensions  = @(
         'ms-vscode-remote.remote-containers',
         'ms-vscode-remote.remote-wsl',
         'ms-vscode.powershell',
         'redhat.vscode-yaml',
         'ZainChen.json',
         'esbenp.prettier-vscode',
-        'ms-kubernetes-tools.vscode-kubernetes-tools'
+        'ms-kubernetes-tools.vscode-kubernetes-tools',
+        'msazurermtools.azurerm-vscode-tools',
+        'ms-azuretools.vscode-azureresourcegroups',
+        'ms-azuretools.vscode-azurevirtualmachines',
+        'ms-azuretools.vscode-bicep',
+        'ms-vscode.azurecli'
     )
 
     HostVMDriveLetter = "V"
@@ -42,27 +47,21 @@
 
     MgmtHostConfig = @{
         Hostname = "AzLMGMT"
-        IP       = "192.168.1.11/20"
+        IP       = "192.168.1.11/24"
     }
 
     NodeHostConfig = @(
         @{
             Hostname    = "AzLHOST1"
-            IP          = "192.168.1.12/20"
+            IP          = "192.168.1.12/24"
             StorageAIP  = "10.71.1.10"
             StorageBIP  = "10.71.2.10"
         },
         @{
             Hostname    = "AzLHOST2"
-            IP          = "192.168.1.13/20"
+            IP          = "192.168.1.13/24"
             StorageAIP  = "10.71.1.11"
             StorageBIP  = "10.71.2.11"
-        }
-        @{
-            Hostname    = "AzLHOST3"
-            IP          = "192.168.1.14/24"
-            StorageAIP  = "10.71.1.12"
-            StorageBIP  = "10.71.2.12"
         }
     )
 
@@ -71,7 +70,7 @@
 
     # VM Configuration
     NestedVMMemoryinGB                   = 96GB                                 # This value controls the amount of RAM for each Nested Hyper-V Host (AzSHOST1-2).
-    AzSMGMTMemoryinGB                    = 24GB                                  # This value controls the amount of RAM for the AzSMGMT Nested VM which contains only the Console, Router, Admincenter, and DC VMs.
+    AzSMGMTMemoryinGB                    = 28GB                                  # This value controls the amount of RAM for the AzSMGMT Nested VM which contains only the Console, Router, Admincenter, and DC VMs.
     AzSMGMTProcCount                     = 20
     InternalSwitch                       = "InternalSwitch"                      # Name of internal switch that the LocalBox VMs will use in Single Host mode.
     FabricSwitch                         = "vSwitch-Fabric"
@@ -89,13 +88,13 @@
 
     # SDN Lab Domain
     SDNDomainFQDN                        = "azl.local"                      # Limit name (not the .com) to 14 characters as the name will be used as the NetBIOS name.
-    DCName                               = "jumpstartdc"                          # Name of the domain controller virtual machine (limit to 14 characters)
+    DCName                               = "dc01"                          # Name of the domain controller virtual machine (limit to 14 characters)
 
     # NAT Configuration
-    natHostSubnet                        = "192.168.128.0/20"
+    natHostSubnet                        = "192.168.128.0/24"
     natHostVMSwitchName                  = "InternalNAT"
     natConfigure                         = $true
-    natSubnet                            = "192.168.46.0/20"                      # This value is the subnet is the NAT router will use to route to  AzSMGMT to access the Internet. It can be any /20 subnet and is only used for routing.
+    natSubnet                            = "192.168.46.0/24"                      # This value is the subnet is the NAT router will use to route to  AzSMGMT to access the Internet. It can be any /24 subnet and is only used for routing.
     natDNS                               = "%staging-natDNS%"                     # Do not change - can be configured by passing the optioanl natDNS parameter to the ARM deployment.
 
     # Global MTU
@@ -106,7 +105,7 @@
     ConfigureBGPpeering                  = $true                                  # Peers the GW and MUX VMs with the BGP-ToR-Router automatically if ProvisionNC = $true
 
     ################################################################################################################
-    # Edit at your own risk. If you edit the subnets, ensure that you keep using the PreFix /20.                   #
+    # Edit at your own risk. If you edit the subnets, ensure that you keep using the PreFix /24.                   #
     ################################################################################################################
 
     # AzSMGMT Management VM's Memory Settings
@@ -115,7 +114,7 @@
     MEM_WAC                              = 10GB                                    # Memory provided for the Windows Admin Center VM
 
     # Cluster S2D Storage Disk Size (per disk)
-    S2D_Disk_Size                        = 500GB                                    # Disk size for each of the 4 dynamic VHD disks attached to the 3 AzSHOST VMs that will be used to create the SDNCLUSTER
+    S2D_Disk_Size                        = 170GB                                    # Disk size for each of the 4 dynamic VHD disks attached to the 3 AzSHOST VMs that will be used to create the SDNCLUSTER
 
     # Physical Host Internal IP
     PhysicalHostInternalIP               = "192.168.1.20"                          # IP Address assigned to Internal Switch vNIC in a Single Host Configuration
@@ -127,17 +126,17 @@
     SDNLABRoute                          = "192.168.1.1"
 
     # Management IPs for Console and Domain Controller
-    DCIP                                 = "192.168.1.254/20"
-    WACIP                                = "192.168.1.9/20"
+    DCIP                                 = "192.168.1.254/24"
+    WACIP                                = "192.168.1.9/24"
     WACMAC                               = "10155D010B00"
 
     # Router Config
     BGPRouterName                        = "vm-router"
-    BGPRouterIP_MGMT                     = "192.168.1.1/20"
-    BGPRouterIP_ProviderNetwork          = "172.16.0.1/20"
-    BGPRouterIP_VLAN110                  = "10.10.0.1/20"
-    BGPRouterIP_VLAN200                  = "192.168.200.1/20"
-    BGPRouterIP_SimulatedInternet        = "131.127.0.1/20"
+    BGPRouterIP_MGMT                     = "192.168.1.1/24"
+    BGPRouterIP_ProviderNetwork          = "172.16.0.1/24"
+    BGPRouterIP_VLAN110                  = "10.10.0.1/24"
+    BGPRouterIP_VLAN200                  = "192.168.200.1/24"
+    BGPRouterIP_SimulatedInternet        = "131.127.0.1/24"
     BGPRouterASN                         = "65534"
 
     # VLANs
@@ -150,12 +149,12 @@
     StorageBVLAN                         = 712
 
     # Subnets
-    MGMTSubnet                           = "192.168.1.0/20"
+    MGMTSubnet                           = "192.168.1.0/24"
     storageAsubnet                       = "255.255.255.0"
     storageBsubnet                       = "255.255.255.0"
 
     # VIP Subnets
-    PublicVIPSubnet                      = "40.40.40.0/20"
+    PublicVIPSubnet                      = "40.40.40.0/24"
 
     # SDN ASN
     SDNASN                               = 64512
@@ -165,14 +164,14 @@
     WACport                              = 443
 
     # AKS and Resource bridge variables
-    rbCustomLocationName                 = "jumpstart"
+    rbCustomLocationName                 = "azl"
     AKSworkloadClusterName               = "localbox-aks" # lowercase only
     AKSvnetname                          = "akshcivnet"
     AKSNodeStartIP                       = "10.10.0.101"
     AKSNodeEndIP                         = "10.10.0.199"
     AKSVIPStartIP                        = "10.10.0.10"
     AKSVIPEndIP                          = "10.10.0.100"
-    AKSIPPrefix                          = "10.10.0.0/20"
+    AKSIPPrefix                          = "10.10.0.0/24"
     AKSControlPlaneIP                    = "10.10.0.5"
     AKSGWIP                              = "10.10.0.1"
     AKSDNSIP                             = "192.168.1.254"
@@ -186,7 +185,7 @@
     clusterIpRangeStart                  = "192.168.1.100"
     clusterIpRangeEnd                    = "192.168.1.199"
     vmGateway                            = "192.168.200.1"
-    vmIpPrefix                           = "192.168.200.0/20"
+    vmIpPrefix                           = "192.168.200.0/24"
     vmDNS                                = "192.168.1.254"
     vmVLAN                               = "200"
 }
